@@ -7,10 +7,23 @@ import lib.log as logging
 import lib.config_json as config_json
 import lib.module as modul_loader
 import lib.timer as timer
+import signal
+
+sh = None
+
+def handler(signum, frame):
+    global sh
+    sh.running = False
+    print('Signal handler called with signal', signum)
+
+
 
 class smarthome:
     def __init__(cls):
+        global sh
+        sh = cls
         cls.s = cls
+        cls.running = True
         cls.pid = os.getpid()
         f = os.path.abspath(__main__.__file__)
         cls.module = []
@@ -36,11 +49,13 @@ class smarthome:
 
     def run(cls):
         cls.log.info("run")
+        signal.signal(signal.SIGINT, handler)
+        signal.signal(signal.SIGTERM, handler)
         timeout = 0
         if 'timeout' in cls.cfg.data:
             timeout = cls.cfg.data['timeout']
         timeout += time.time()
-        while cls.is_service or timeout > time.time():
+        while cls.running and (cls.is_service or timeout > time.time()):
             time.sleep(1)
         for m in cls.module:
             m.stop()
