@@ -1,8 +1,6 @@
 import logging
 
-DEBUG = logging.DEBUG
-
-DEFAULT = DEBUG
+DEFAULT = logging.CRITICAL
 stream_handler = None
 
 class MyFormatter(logging.Formatter):
@@ -14,15 +12,8 @@ class MyFormatter(logging.Formatter):
         cpath = cpath[-cls.width:].ljust(cls.width)
         record.message = record.getMessage()
         cls.terminator = '\r'
-        s = "%-7s %s %s : %s" % (record.levelname, cls.formatTime(record, cls.datefmt), cpath, record.getMessage())
+        s = "%-8s %s %s : %s" % (record.levelname, cls.formatTime(record, cls.datefmt), cpath, record.getMessage())
         return s
-#        if record.exc_info:
-#           if not record.exc_text:
-#                record.exc_text = cls.formatException(record.exc_info)
-#        if record.exc_text:
-#            if s[-1:] != "\n":
-#                s = s + "\n"
-#            s = s + record.exc_text
 
 def getLogger(name):
     global stream_handler, DEFAULT
@@ -33,3 +24,16 @@ def getLogger(name):
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
     return logger
+
+def update(logger, cfg):
+    if cfg['level'] == 'debug':
+        logger.setLevel(logging.DEBUG)
+    if cfg['level'] == 'info':
+        logger.setLevel(logging.INFO)
+    if cfg['level'] == 'warning':
+        logger.setLevel(logging.WARNING)
+    if cfg['level'] == 'error':
+        logger.setLevel(logging.ERROR)
+    if cfg['level'] == 'critical':
+        logger.setLevel(logging.CRITICAL)
+
