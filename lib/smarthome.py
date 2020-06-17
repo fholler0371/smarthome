@@ -2,9 +2,11 @@ import os, sys, time
 import subprocess
 import __main__
 import psutil
+import threading
 import lib.log as logging
 import lib.config_json as config_json
 import lib.module as modul_loader
+import lib.timer as timer
 
 class smarthome:
     def __init__(cls):
@@ -24,10 +26,13 @@ class smarthome:
             logging.update(cls.log, cls.cfg.data['logger'])
         else:
             cls.log.error("kein Eintrag fuer logger in der konfiguration")
+        cls.timer = timer.get(cls)
         if 'module' in cls.cfg.data:
             for modul in cls.cfg.data['module']:
                 m = modul_loader.load(cls.s, modul, cls.cfg.data['module'][modul])
-                print(modul)
+                if not m == None:
+                    cls.module.append(m)
+                    m.start()
 
     def run(cls):
         cls.log.info("run")
@@ -37,10 +42,17 @@ class smarthome:
         timeout += time.time()
         while cls.is_service or timeout > time.time():
             time.sleep(1)
+        for m in cls.module:
+            m.stop()
+        if not cls.timer == None:
+            cls.timer.stop()
+        for th in threading.enumerate():
+            if not th == threading.main_thread():
+                th.join()
+        cls.log.info("run beendet")
         print(cls.basepath)
         print(cls.basename)
         print('service:', cls.is_service)
-        cls.log.info("run beendet")
 
     def __is_service(cls):
         cls.log.info("Check Service")

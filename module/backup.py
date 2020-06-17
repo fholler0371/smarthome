@@ -3,5 +3,11 @@ class modul:
         cls.sh = sh
         cls.cfg = cfg
         cls.sh.log.info('__init__')
-        print(sh)
-        print(cfg)
+
+    def start(cls):
+        cls.sh.log.info('start')
+        print(cls.sh)
+        print(cls.cfg)
+
+    def stop(cls):
+        cls.sh.log.info('stop')
