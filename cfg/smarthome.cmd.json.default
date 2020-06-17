@@ -1,5 +1,8 @@
 { "logger" : {
   "level" : "debug",
   "dest" : "console"
+  }, "timeout": 30,
+  "module" : { "backup" : {
+    }
   }
 }
