@@ -3,10 +3,10 @@ import subprocess
 import __main__
 import psutil
 import threading
-import lib.log as logging
-import lib.config_json as config_json
-import lib.module as modul_loader
-import lib.timer as timer
+import bin.log as logging
+import bin.config_json as config_json
+import bin.module as modul_loader
+import bin.timer as timer
 import signal
 
 sh = None
