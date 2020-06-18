@@ -3,11 +3,11 @@ import subprocess
 import __main__
 import psutil
 import threading
+import signal
 import bin.log as logging
 import bin.config_json as config_json
 import bin.module as modul_loader
 import bin.timer as timer
-import signal
 
 sh = None
 
@@ -29,6 +29,10 @@ class smarthome:
         cls.module = []
         cls.basepath = os.path.dirname(f)
         cls.basename = os.path.splitext(os.path.basename(f))[0]
+        if len(sys.argv) > 1:
+            import bin.cmd_line_tools as tools
+            tools.run(cls)
+            sys.exit()
         cls.log = logging.getLogger(cls.basename)
         cls.is_service = cls.__is_service()
         f = cls.basename
