@@ -7,6 +7,7 @@ if [ -d "$basepath" ];then
 
 cd $basepath/tmp
 git clone https://github.com/fholler0371/smarthome.git
+cp -R tmp/smarthome/* ./
 echo "update"
 
 else
