@@ -6,9 +6,9 @@ basepath="$dir/smarthome";
 if [ -d "$basepath" ];then
 
 cd $basepath/tmp
+rm -R --force smarthome
 git clone https://github.com/fholler0371/smarthome.git
 cd $basepath
-ls -l
 cp -R tmp/smarthome/* ./
 rm -R --force tmp/smarthome
 
