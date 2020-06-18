@@ -13,6 +13,6 @@ def load(sh, name, cfg):
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         cls = mod.modul(sh, cfg)
-    except:
-        sh.log.error(name + ' Fehler beim laden')
+    except Exception as e:
+        sh.log.error(str(e))
     return cls

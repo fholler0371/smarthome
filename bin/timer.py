@@ -1,27 +1,23 @@
-from threading import Thread, Timer
+from threading import Timer
 import time
 
-class timer(Thread):
+class timer:
     def __init__(cls, sh):
-        Thread.__init__(cls)
-        cls.name = 'timer'
         cls.sh = sh
-        cls.sh.log.info("Timer Thred Init")
+        cls.sh.log.info("Init")
         cls.sh = sh
         cls.running = False
         cls.timer = None
+        cls.cron = []
 
-    def run(cls):
+    def start(cls):
+        cls.sh.log.info("Start")
         if not cls.running:
             cls.running = True
-            cls.sh.log.info("Timer Thred: Start")
             cls.__loop()
-            while cls.running:
-                time.sleep(1)
-            cls.sh.log.info("Timer Thred: Stop")
 
     def __loop(cls):
-        cls.sh.log.info("Timer Thred: Loop")
+        cls.sh.log.info(": Loop")
         if cls.running:
             wait = (int(time.time()/60)+1)*60-time.time()
             cls.sh.log.debug("wait: "+str(wait))
@@ -33,6 +29,11 @@ class timer(Thread):
         cls.running = False
         if not cls.timer == None:
             cls.timer.cancel()
+
+    def cron_add(cls, pattern, job):
+        cls.sh.log.info('add cron job')
+        cls.sh.log.debug(pattern + " " + str(job))
+        cls.cron.append({'pattern': pattern, 'job': job})
 
 def get(sh):
     sh.log.info('get')
