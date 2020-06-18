@@ -7,6 +7,7 @@ if [ -d "$basepath" ];then
 
 cd $basepath/tmp
 git clone https://github.com/fholler0371/smarthome.git
+cd $basepath
 cp -R tmp/smarthome/* ./
 rm -R --force tmp/smarthome
 
@@ -33,8 +34,3 @@ sudo chown -R $(id -u):$(id -g) $basepath
 sudo chmod +x $file
 $file install
 $file restart
-
-ls -l $basepath
-
-
-
