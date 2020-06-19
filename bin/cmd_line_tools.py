@@ -42,8 +42,9 @@ def run(sh):
     elif args.command == 'stop':
         subprocess.run(('sudo systemctl stop ' + sh.basename + '.service').split(' '))
     elif args.command == 'restart':
-        subprocess.run(('sudo systemctl start ' + sh.basename + '.service').split(' '))
         subprocess.run(('sudo systemctl stop ' + sh.basename + '.service').split(' '))
+        subprocess.run(('sudo systemctl start ' + sh.basename + '.service').split(' '))
+        subprocess.run(('sudo systemctl status ' + sh.basename + '.service').split(' '))
     elif args.command == 'status':
         result = subprocess.run(('sudo systemctl status ' + sh.basename + '.service').split(' '), capture_output=True)
         for line in result.stdout.decode().split('\n'):
