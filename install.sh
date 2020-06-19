@@ -39,5 +39,4 @@ $file restart
 file="$basepath/client.py"
 sed -i -e "1d" $file
 sed  -i "1i #!$basepath/env/bin/python" $file
-sudo chown -R $(id -u):$(id -g) $basepath
 sudo chmod +x $file
