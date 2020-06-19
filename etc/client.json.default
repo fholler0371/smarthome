@@ -1,1 +1,8 @@
-{"ip": "", "port": 3000}
+{
+  "ip": "",
+  "logger": {
+    "dest": "console",
+    "level": "debug"
+  },
+  "port": 3050
+}

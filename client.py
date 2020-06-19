@@ -21,6 +21,8 @@ import __main__
 import os, sys, time
 import bin.log as logging
 import bin.config_json as config_json
+import netifaces
+import bin.ping as ping
 
 basepath = os.path.dirname(os.path.abspath(__main__.__file__))
 sys.path.append(basepath+"/lib")
@@ -28,7 +30,6 @@ sys.path.append(basepath+"/lib")
 import config
 import ipaddress
 import socket
-import ping
 import subprocess
 import menu_cli
 
@@ -43,6 +44,30 @@ class client_cls:
         cls.log = logging.getLogger(cls.basename)
         f = cls.basename
         cls.cfg = config_json.load(cls, f)
+        if cls.cfg.data['ip'] == '':
+            cls.__guess_network()
+            cls.cfg.save()
+        if 'logger' in cls.cfg.data:
+            logging.update(cls, cls.log, cls.cfg.data['logger'])
+
+    def __guess_network(cls):
+        net = []
+        for interface in netifaces.interfaces():
+            if 'broadcast' in netifaces.ifaddresses(interface)[netifaces.AF_INET][0]:
+                net.append(interface)
+        gw = netifaces.gateways()['default'][netifaces.AF_INET][1]
+        interface = None
+        if len(net) > 1:
+            for i in net:
+                if str(i) != str(gw):
+                    interface = i
+        elif len(net) > 0:
+            interface = net[0]
+        if interface == None:
+            print('kein Netzwerk gefunden')
+            sys.exit()
+        addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
+        cls.cfg.data['ip'] = addr['addr'] + '/' + addr['netmask']
 
 def connect_service(host, service):
 	menu_id = 0
@@ -87,6 +112,7 @@ def connect_host(host, port):
 
 def Main():
     client = client_cls()
+    print(ping.scan(client.log, client.cfg.data['ip']))
     print(client.basepath)
     print(client.basename)
     print(client.basename)
