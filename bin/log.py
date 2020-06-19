@@ -1,7 +1,10 @@
 import logging
+from logging.handlers import RotatingFileHandler
 
 DEFAULT = logging.CRITICAL
+
 stream_handler = None
+file_handler = None
 
 class MyFormatter(logging.Formatter):
     width = 35
@@ -25,7 +28,7 @@ def getLogger(name):
     logger.addHandler(stream_handler)
     return logger
 
-def update(logger, cfg):
+def update(sh, logger, cfg):
     if cfg['level'] == 'debug':
         logger.setLevel(logging.DEBUG)
     if cfg['level'] == 'info':
@@ -36,4 +39,18 @@ def update(logger, cfg):
         logger.setLevel(logging.ERROR)
     if cfg['level'] == 'critical':
         logger.setLevel(logging.CRITICAL)
+    global stream_handler, file_handler
+    while len(logger.handlers) > 0:
+        h = logger.handlers[0]
+        logger.removeHandler(h)
+    if cfg['dest'] == 'console':
+        if stream_handler == None:
+            stream_handler = logging.StreamHandler()
+            stream_handler.setFormatter(MyFormatter())
+        logger.addHandler(stream_handler)
+    if cfg['dest'] == 'file':
+        if file_handler == None:
+            file_handler = RotatingFileHandler(sh.basepath + '/log/' + sh.basename + '.log', maxBytes=1000000000, backupCount=10)
+            file_handler.setFormatter(MyFormatter())
+        logger.addHandler(file_handler)
 

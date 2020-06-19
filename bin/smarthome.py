@@ -40,7 +40,7 @@ class smarthome:
             f += '.cmd'
         cls.cfg = config_json.load(cls.s, f)
         if 'logger' in cls.cfg.data:
-            logging.update(cls.log, cls.cfg.data['logger'])
+            logging.update(cls, cls.log, cls.cfg.data['logger'])
         else:
             cls.log.error("kein Eintrag fuer logger in der konfiguration")
         cls.timer = timer.get(cls)

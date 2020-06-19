@@ -1,7 +1,7 @@
 {
   "logger": {
-    "dest": "console",
-    "level": "debug"
+    "dest": "file",
+    "level": "error"
   },
   "module": {
     "backup": {
