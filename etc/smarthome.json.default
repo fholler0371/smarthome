@@ -6,7 +6,7 @@
   "module": {
     "backup": {
       "cron": "* 20 * * *"
-    }
+    }, "server" : {"port":3000}
   },
   "timeout": 120
 }
