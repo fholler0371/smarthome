@@ -22,20 +22,18 @@ import os, sys, time
 import bin.log as logging
 import bin.config_json as config_json
 import netifaces
+import socket
 import bin.ping as ping
+import bin.menu_cli as menu_cli
 
-basepath = os.path.dirname(os.path.abspath(__main__.__file__))
-sys.path.append(basepath+"/lib")
-
+'''
 import config
 import ipaddress
-import socket
 import subprocess
-import menu_cli
 
 # Import socket module
 import time
-
+'''
 class client_cls:
     def __init__(cls):
         f = os.path.abspath(__main__.__file__)
@@ -68,7 +66,7 @@ class client_cls:
             sys.exit()
         addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
         cls.cfg.data['ip'] = addr['addr'] + '/' + addr['netmask']
-
+'''
 def connect_service(host, service):
 	menu_id = 0
 	try:
@@ -109,43 +107,32 @@ def connect_host(host, port):
 		out = menu_cli.menu({"exit":"Beenden","titel":"Bitte einen Service vom Rechner "+host["name"]+" aussuchen", "entries":data})
 		if out > 0:
 			connect_service(host, services[out-1])
-
+'''
 def Main():
     client = client_cls()
-    print(ping.scan(client.log, client.cfg.data['ip']))
-    print(client.basepath)
-    print(client.basename)
-    print(client.basename)
-    print(client.cfg.data)
-    return
-
-def x():
-	cfg = config.c_config()
-	cfg.load(basepath+"/cfg/"+os.path.splitext(os.path.basename(main_lib.__file__))[0]+".json")
-	print("Suche Rechner")
-	hosts = []
-	for host in ping.scan(cfg.data["ip-range"]):
-		try:
-			s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-			s.settimeout(2)
-			s.connect((str(host),cfg.data["port"]))
-			message = "HELLO"
-			s.send(message.encode('ascii'))
-			data = s.recv(1024)
-			if "REMOTE_CLI" == data.decode('ascii'):
-				s.send("NAME".encode('ascii'))
-				hosts.append({"ip": host, "name": s.recv(1024).decode('ascii')})
-			s.close()
-		except:
-			pass
-	data = []
-	for x in hosts:
-		data.append(x["name"])
-	out = 0
-	while not(out == -1):
-		out = menu_cli.menu({"exit":"Beenden","titel":"Bitte einen Server aussuchen", "entries":data})
-		if out > 0:
-			connect_host(hosts[out-1], cfg.data["port"])
+    hosts = []
+    for host in ping.scan(client.log, client.cfg.data['ip']):
+        try:
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.settimeout(2)
+            s.connect((str(host),client.cfg.data['port']))
+            message = 'HELLO'
+            s.send(message.encode('ascii'))
+            data = s.recv(1024)
+            if 'REMOTE_CLI' == data.decode('ascii'):
+                s.send('NAME'.encode('ascii'))
+                hosts.append({'ip': host, 'name': s.recv(1024).decode('ascii')})
+            s.close()
+        except Exception as e:
+           client.log.debug(str(e))
+    data = []
+    for x in hosts:
+        data.append(x["name"])
+        out = 0
+        while not(out == -1):
+           out = menu_cli.menu({"exit":"Beenden","titel":"Bitte einen Server aussuchen", "entries":data})
+           if out > 0:
+               connect_host(hosts[out-1], client.cfg.data["port"])
 
 if __name__ == '__main__':
 	Main()

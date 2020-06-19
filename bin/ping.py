@@ -47,8 +47,8 @@ def scan(log, range):
         timeout += 0.5
         ping(log, str(host))
         timeout += time.time()
-        while timeout > time.time() and (send - receive) > 0:
-            time.sleep(0.5)
+    while timeout > time.time() and (send - receive) > 0:
+        time.sleep(0.5)
     return hosts
 
 def ping(log, host):
