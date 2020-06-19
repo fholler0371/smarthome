@@ -3,6 +3,7 @@ class modul_base:
         cls.sh = sh
         cls.cfg = cfg
         cls.running = False
+        cls.has_menu = False
 
     def start(cls):
         pass
