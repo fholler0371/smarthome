@@ -26,14 +26,6 @@ import socket
 import bin.ping as ping
 import bin.menu_cli as menu_cli
 
-'''
-import config
-import ipaddress
-import subprocess
-
-# Import socket module
-import time
-'''
 class client_cls:
     def __init__(cls):
         f = os.path.abspath(__main__.__file__)
@@ -66,48 +58,22 @@ class client_cls:
             sys.exit()
         addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
         cls.cfg.data['ip'] = addr['addr'] + '/' + addr['netmask']
-'''
-def connect_service(host, service):
-	menu_id = 0
-	try:
-		s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-		s.connect((str(host["ip"]),service["port"]))
-		message = "MENU "+str(menu_id)
-		s.send(message.encode('ascii'))
-		data = s.recv(1024)
-		print(data)
-		s.close()
-	except:
-		pass
-	print(host)
-	print(service)
-	input("halt")
 
-def connect_host(host, port):
-	services = []
-	i = 0
-	while i < 50:
-		try:
-			s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-			s.settimeout(2)
-			s.connect((str(host["ip"]),port+i))
-			message = "HELLO"
-			s.send(message.encode('ascii'))
-			data = s.recv(1024)
-			services.append({"port": port+i, "name": data.decode('ascii')})
-			s.close()
-		except:
-			pass
-		i += 1
-	data = []
-	for x in services:
-		data.append(x["name"])
-	out = 0
-	while not(out == -1):
-		out = menu_cli.menu({"exit":"Beenden","titel":"Bitte einen Service vom Rechner "+host["name"]+" aussuchen", "entries":data})
-		if out > 0:
-			connect_service(host, services[out-1])
-'''
+def connect_host(log, host, port):
+    menu_id = '0'
+    try:
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect((str(host["ip"]), port))
+        message = "MENU "+str(menu_id)
+        s.send(message.encode('ascii'))
+        data = s.recv(1024)
+        s.close()
+    except Exception as e:
+        log.error(str(e))
+    print(host)
+    print(data)
+    input("halt")
+
 def Main():
     client = client_cls()
     hosts = []
@@ -132,7 +98,7 @@ def Main():
         while not(out == -1):
            out = menu_cli.menu({"exit":"Beenden","titel":"Bitte einen Server aussuchen", "entries":data})
            if out > 0:
-               connect_host(hosts[out-1], client.cfg.data["port"])
+               connect_host(client.log, hosts[out-1], client.cfg.data["port"])
 
 if __name__ == '__main__':
 	Main()
