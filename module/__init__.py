@@ -11,3 +11,6 @@ class modul_base:
 
     def stop(cls):
         cls.running = False
+
+    def menu_cli(cls, menu):
+        return '-'

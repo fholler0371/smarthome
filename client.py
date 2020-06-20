@@ -72,6 +72,7 @@ def get_menu(log, host, port, cmd):
         dataj = json.loads(data.decode('ascii'))
         s.close()
     except Exception as e:
+        print(data)
         log.error(str(e))
     if dataj != None:
         out = menu_cli.menu({"exit":"Zurueck","titel": dataj['label'], "entries2":dataj['entries']})

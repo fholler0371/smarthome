@@ -41,6 +41,10 @@ class client(Thread):
                         i += 1
                     cls.conn.send(json.dumps(out).encode('ASCII'))
                     timer = time.time()
+                elif data.startswith('MENU'):
+                    cls.sh.log.debug(data)
+                    modul_id = int(data[5:].split('.')[0])
+                    cls.conn.send(cls.sh.module[modul_id].menu_cli(data).encode('ASCII'))
                 elif data == 'EXIT':
                     cls.sh.log.debug('EXIT')
                     cls.running = False
