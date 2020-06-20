@@ -4,6 +4,7 @@ class modul_base:
         cls.cfg = cfg
         cls.running = False
         cls.has_menu = False
+        cls.name = 'Noname'
 
     def start(cls):
         pass

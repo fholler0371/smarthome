@@ -1,5 +1,6 @@
 from module import modul_base as base
 from threading import Thread
+import json
 import time, os
 import socket
 import select
@@ -30,10 +31,15 @@ class client(Thread):
                     cls.sh.log.debug('NAME')
                     cls.conn.send(os.uname()[1].encode('ASCII'))
                     timer = time.time()
-                elif data == 'MENU 0':
-                    cls.sh.log.debug('MENU 0')
-                    cls.conn.send('-'.encode('ASCII'))
-                    print(cls.sh.module)
+                elif data == 'MENU':
+                    cls.sh.log.debug('MENU')
+                    out = {'label': 'Bitte Modul aussuchen', 'entries' : [], 'exit':None}
+                    i = 0
+                    while i < len(cls.sh.module):
+                        if cls.sh.module[i].has_menu:
+                             out['entries'].append({'label' : cls.sh.module[i].name, 'cmd': 'MENU '+str(i)})
+                        i += 1
+                    cls.conn.send(json.dumps(out).encode('ASCII'))
                     timer = time.time()
                 elif data == 'EXIT':
                     cls.sh.log.debug('EXIT')
@@ -44,7 +50,7 @@ class client(Thread):
                     cls.sh.log.warn('unbekannter Befehl ' + data)
                     cls.conn.send('-'.encode('ASCII'))
                 time.sleep(1)
-        except Exeption as e:
+        except Exception as e:
             cls.sh.log.error(str(e))
         cls.conn.close()
 

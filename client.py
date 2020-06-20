@@ -23,6 +23,7 @@ import bin.log as logging
 import bin.config_json as config_json
 import netifaces
 import socket
+import json
 import bin.ping as ping
 import bin.menu_cli as menu_cli
 
@@ -59,20 +60,31 @@ class client_cls:
         addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
         cls.cfg.data['ip'] = addr['addr'] + '/' + addr['netmask']
 
-def connect_host(log, host, port):
-    menu_id = '0'
+def get_menu(log, host, port, cmd):
+    log.info(cmd)
+    dataj = None
+    out = None
     try:
         s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        s.connect((str(host["ip"]), port))
-        message = "MENU "+str(menu_id)
-        s.send(message.encode('ascii'))
+        s.connect((str(host['ip']), port))
+        s.send(cmd.encode('ascii'))
         data = s.recv(1024)
+        dataj = json.loads(data.decode('ascii'))
         s.close()
     except Exception as e:
         log.error(str(e))
+    if dataj != None:
+        out = menu_cli.menu({"exit":"Zurueck","titel": dataj['label'], "entries2":dataj['entries']})
+        if out != -1:
+            get_menu(log, host, port, out)
+    print(out)
     print(host)
-    print(data)
+    print(dataj)
     input("halt")
+
+def connect_host(log, host, port):
+    log.info('connect ' + host['ip'] + ' port: ' + str(port))
+    get_menu(log, host, port, 'MENU')
 
 def Main():
     client = client_cls()
