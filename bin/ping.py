@@ -31,7 +31,7 @@ class do_ping(Thread):
         cls.fail = fail
 
     def run(cls):
-        ping_response = subprocess.Popen(["/bin/ping", "-c1", "-W1", str(cls.host)], stdout=subprocess.PIPE).stdout.read()
+        ping_response = subprocess.Popen(['/bin/ping', '-c1', '-W1', str(cls.host)], stdout=subprocess.PIPE).stdout.read()
         if ping_response.decode().find("1 received") > 0:
             cls.succsess(cls.host)
         else:
