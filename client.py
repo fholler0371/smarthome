@@ -60,6 +60,27 @@ class client_cls:
         addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
         cls.cfg.data['ip'] = addr['addr'] + '/' + addr['netmask']
 
+def get_cmd(log, host, port, cmd):
+    log.info(cmd)
+    print('')
+    print('Befehl gesendet')
+    print('')
+    dataj = None
+    try:
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect((str(host['ip']), port))
+        s.send(cmd.encode('ascii'))
+        value = ''
+        while not value.endswith('>>END<<'):
+            data = s.recv(1024)
+            value += data.decode('ascii')
+        s.close()
+    except Exception as e:
+        log.error(str(e))
+    print(value[:-7])
+    print('')
+    input('Bitte eine Taste druecken')
+
 def get_menu(log, host, port, cmd):
     log.info(cmd)
     dataj = None
@@ -75,13 +96,13 @@ def get_menu(log, host, port, cmd):
         print(data)
         log.error(str(e))
     if dataj != None:
-        out = menu_cli.menu({"exit":"Zurueck","titel": dataj['label'], "entries2":dataj['entries']})
-        if out != -1:
-            get_menu(log, host, port, out)
-    print(out)
-    print(host)
-    print(dataj)
-    input("halt")
+        while str(out) != '-1':
+            out = menu_cli.menu({"exit":"Zurueck","titel": dataj['label'], "entries2":dataj['entries']})
+            if out != -1:
+                if out.startswith('CMD'):
+                    get_cmd(log, host, port, out)
+                else:
+                   get_menu(log, host, port, out)
 
 def connect_host(log, host, port):
     log.info('connect ' + host['ip'] + ' port: ' + str(port))

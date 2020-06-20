@@ -14,3 +14,6 @@ class modul_base:
 
     def menu_cli(cls, menu):
         return '-'
+
+    def cmd_cli(cls, menu):
+        return '-'

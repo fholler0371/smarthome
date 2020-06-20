@@ -45,6 +45,17 @@ class client(Thread):
                     cls.sh.log.debug(data)
                     modul_id = int(data[5:].split('.')[0])
                     cls.conn.send(cls.sh.module[modul_id].menu_cli(data).encode('ASCII'))
+                elif data.startswith('CMD'):
+                    save_timeout = cls.timeout
+                    cls.timeout = 600
+                    cls.sh.log.debug(data)
+                    modul_id = int(data[4:].split('.')[0])
+                    out = cls.sh.module[modul_id].cmd_cli(data) + '>>END<<'
+                    while len(out) > 1000:
+                        cls.conn.send(out[:1000].encode('ASCII'))
+                        out = out[1000:]
+                    cls.conn.send(out.encode('ASCII'))
+                    cls.timeout = save_timeout
                 elif data == 'EXIT':
                     cls.sh.log.debug('EXIT')
                     cls.running = False
