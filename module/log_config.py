@@ -24,7 +24,7 @@ class modul(base):
             out = json.dumps({'label': 'Bitte Aktion aussuchen', 'entries' : [
                 {'label' : 'Status', 'cmd': 'CMD ' + str(menu_levels[0]) + '.1'},
                 {'label' : 'Ziel aendern', 'cmd': 'MENU ' + str(menu_levels[0]) + '.1'},
-                {'label' : 'Level waelen', 'cmd': 'MENU ' + str(menu_levels[0]) + '.2'}
+                {'label' : 'Level waehlen', 'cmd': 'MENU ' + str(menu_levels[0]) + '.2'}
                 ], 'exit':None})
         elif len(menu_levels) == 2:
             if menu_levels[1] == '1':
