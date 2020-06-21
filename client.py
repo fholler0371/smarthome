@@ -17,15 +17,15 @@
     Version 1.0
 """
 
-import __main__
-import os, sys, time
-import bin.log as logging
-import bin.config_json as config_json
-import netifaces
+import os, sys
 import socket
 import json
-import bin.ping as ping
-import bin.menu_cli as menu_cli
+import netifaces
+from bin import ping
+from bin import menu_cli
+from bin import log as logging
+from bin import config_json
+import __main__
 
 class client_cls:
     def __init__(cls):
@@ -126,13 +126,13 @@ def Main():
         except Exception as e:
            client.log.debug(str(e))
     data = []
-    for x in hosts:
-        data.append(x["name"])
-        out = 0
-        while not(out == -1):
-           out = menu_cli.menu({"exit":"Beenden","titel":"Bitte einen Server aussuchen", "entries":data})
-           if out > 0:
-               connect_host(client.log, hosts[out-1], client.cfg.data["port"])
+    for host in hosts:
+        data.append(host['name'])
+    out = 0
+    while out != -1:
+       out = menu_cli.menu({'exit"': 'Beenden', 'titel': 'Bitte einen Server aussuchen', 'entries':data})
+       if out > 0:
+           connect_host(client.log, hosts[out-1], client.cfg.data['port'])
 
 if __name__ == '__main__':
 	Main()
