@@ -5,8 +5,19 @@
   },
   "module": {
     "backup": {
+      "active": false,
       "cron": "* 20 * * *"
+    },
+    "log_config": {
+      "active": true
+    },
+    "server": {
+      "active": true,
+      "port": 3500
+    },
+    "server_cli": {
+      "active": true
     }
   },
-  "timeout": 120
+  "timeout": 600
 }

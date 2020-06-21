@@ -1,5 +1,23 @@
 import importlib.util
 import os
+import bin.file_tools as tools
+
+def scan(cls):
+    cls.log.info(scan)
+    folder =  cls.basepath + '/module'
+    files = tools.find_files(folder, '*.py')
+    change = False
+    for file in files:
+        name = file.split('/')[-1][:-3]
+        if not name.startswith('__'):
+            if not name in cls.cfg.data['module']:
+                cls.cfg.data['module'][name] = {}
+                change = True
+            if not 'active' in cls.cfg.data['module'][name]:
+                cls.cfg.data['module'][name]['active'] = False
+                change = True
+    if change:
+        cls.cfg.save()
 
 def load(sh, name, cfg):
     sh.log.info(name)
@@ -13,6 +31,7 @@ def load(sh, name, cfg):
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         cls = mod.modul(sh, cfg)
+        cls.modul_name = name
     except Exception as e:
         sh.log.error(str(e))
     return cls

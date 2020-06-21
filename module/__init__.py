@@ -5,6 +5,7 @@ class modul_base:
         cls.running = False
         cls.has_menu = False
         cls.name = 'Noname'
+        cls.modul_name = 'Noname'
 
     def start(cls):
         pass

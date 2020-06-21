@@ -44,12 +44,14 @@ class smarthome:
         else:
             cls.log.error("kein Eintrag fuer logger in der konfiguration")
         cls.timer = timer.get(cls)
+        modul_loader.scan(cls)
         if 'module' in cls.cfg.data:
-            for modul in cls.cfg.data['module']:
-                m = modul_loader.load(cls.s, modul, cls.cfg.data['module'][modul])
-                if not m == None:
-                    cls.module.append(m)
-                    m.start()
+            for modul in  cls.cfg.data['module']:
+                if  cls.cfg.data['module'][modul]['active']:
+                    m = modul_loader.load(cls.s, modul, cls.cfg.data['module'][modul])
+                    if not m == None:
+                        cls.module.append(m)
+                        m.start()
 
     def run(cls):
         cls.log.info("run")
