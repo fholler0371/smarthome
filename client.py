@@ -129,8 +129,8 @@ def Main():
     for host in hosts:
         data.append(host['name'])
     out = 0
-    while out != -1:
-       out = menu_cli.menu({'exit"': 'Beenden', 'titel': 'Bitte einen Server aussuchen', 'entries':data})
+    while out != -1 and data != []:
+       out = menu_cli.menu({'exit': 'Beenden', 'titel': 'Bitte einen Server aussuchen', 'entries':data})
        if out > 0:
            connect_host(client.log, hosts[out-1], client.cfg.data['port'])
 
