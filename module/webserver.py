@@ -1,6 +1,32 @@
 import time
 import json
 from module import modul_base as base
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
+import threading
+from threading import Thread
+
+class backThread(Thread):
+    def __init__(cls, server):
+        Thread.__init__(cls)
+        cls.server = server
+
+    def run(cls):
+        cls.server.serve_forever()
+
+class Handler(BaseHTTPRequestHandler):
+
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type',
+                         'text/plain; charset=utf-8')
+        self.end_headers()
+        message = threading.currentThread().getName()
+        self.wfile.write(message.encode('utf-8'))
+        self.wfile.write(b'\n')
+
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    """Handle requests in a separate thread."""
 
 class modul(base):
     def __init__(cls, sh, cfg):
@@ -8,15 +34,22 @@ class modul(base):
         cls.sh.log.info('__init__')
         cls.name = "WebServer"
         cls.has_menu = True
+        cls.backend_server = None
 
     def start(cls):
         cls.sh.log.info('start')
         if not cls.running:
             cls.running = True
+            if 'backend' in cls.cfg and cls.cfg['backend']:
+                cls.backend_server = ThreadedHTTPServer(('0.0.0.0', cls.cfg['backend-port']), Handler)
+                th = backThread(cls.backend_server)
+                th.start()
 
     def stop(cls):
         cls.sh.log.info('stop')
         cls.running = False
+        if cls.backend_server != None:
+            cls.backend_server.shutdown()
 
     def menu_cli(cls, menu):
         cls.sh.log.info('menu_cli')
