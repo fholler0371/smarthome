@@ -1,3 +1,4 @@
+import time
 import json
 from module import modul_base as base
 
@@ -10,9 +11,12 @@ class modul(base):
 
     def start(cls):
         cls.sh.log.info('start')
+        if not cls.running:
+            cls.running = True
 
     def stop(cls):
         cls.sh.log.info('stop')
+        cls.running = False
 
     def menu_cli(cls, menu):
         cls.sh.log.info('menu_cli')
