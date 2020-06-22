@@ -6,6 +6,6 @@ Ports
 
 4000 lighttpd Master
 
-4100 lighttpd Clients
+4100 CherryPy Clients
 
-4150 lighttpd Clients Development
+4150 CherryPy Development
