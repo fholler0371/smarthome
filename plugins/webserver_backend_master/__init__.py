@@ -18,7 +18,9 @@ class plugin(plugins.base):
             self.sh.cfg.data['plugins'][self.name] = {}
             change = True
         if not 'port' in self.sh.cfg.data['plugins'][self.name]:
-            self.sh.cfg.data['plugins'][self.name]['port'] = 4100
+            self.sh.cfg.data['plugins'][self.name]['port'] = 4000
+            if self.sh.const.is_service:
+                self.sh.cfg.data['plugins'][self.name]['port'] += 100
             change = True
         if change:
              self.sh.cfg.save()
