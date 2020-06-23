@@ -92,6 +92,7 @@ class smarthome:
 
         ''' Load Module '''
         self.plugins = plugins.master(self)
+        self.plugins.load('webserver_backend_master')
 
     def run(self):
         ''' Starten der Haupt Funktion
