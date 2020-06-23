@@ -35,8 +35,13 @@ class master():
         if not hasattr(mod, 'plugin'):
             self.sh.log.error('Klasse plugin nicht gefunden')
             return None
-        cls = mod.plugin(self.sh, name)
+        plugin = mod.plugin(self.sh, name)
+        if plugin.loaded:
+            plugin.run()
 
+    def stop(self):
+        for plugin in self.plugins:
+            self.plugins[plugin].stop()
 
 class base():
     def __init__(self, sh, name):
@@ -44,7 +49,22 @@ class base():
         self.name = name
         self.require = []
         self.cfg = {}
+        self.lib = {}
+        self.loaded = False
 
     def get_requirements(self):
         self.sh.log.info('get_requirements')
         self.sh.plugins.load(self.require)
+        ok = True
+        for plugin in self.require:
+            if plugin in self.sh.plugins.plugins:
+                self.lib[plugin] = self.sh.plugins.plugins[plugin]
+            else:
+                ok = False
+        self.loaded = ok
+
+    def run(self):
+         pass
+
+    def stop(self):
+         pass

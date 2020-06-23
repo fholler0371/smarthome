@@ -93,6 +93,7 @@ class smarthome:
         ''' Load Module '''
         self.plugins = plugins.master(self)
         self.plugins.load('webserver_backend_master')
+        print(self.plugins.plugins)
 
     def run(self):
         ''' Starten der Haupt Funktion
@@ -116,6 +117,8 @@ class smarthome:
         ''' Stoppen des Timers '''
         if not self.timer == None:
             self.timer.stop()
+
+        self.plugins.stop()
 
         ''' Warten auf das Ende aller Threads '''
         for th in threading.enumerate():
