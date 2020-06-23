@@ -19,8 +19,9 @@ def scan(cls):
     if change:
         cls.cfg.save()
 
-def load(sh, name, cfg):
+def load(sh, name):
     sh.log.info(name)
+    cfg = sh.cfg.data['module'][name]
     cls = None
     file = sh.basepath + '/module/' + name + '.py'
     if not os.path.exists(file):
