@@ -1,4 +1,15 @@
+import urllib.request
+from threading import Thread
 import plugins
+
+class last_call(Thread):
+    def __init(self, url):
+        Thread.__init__(srelf)
+        self.url = url
+
+    def run(self):
+        urllib.request.urlopen(self.url)
+
 
 class plugin(plugins.base):
     def __init__(self, sh, name):
@@ -19,8 +30,12 @@ class plugin(plugins.base):
             change = True
         if not 'port' in self.sh.cfg.data['plugins'][self.name]:
             self.sh.cfg.data['plugins'][self.name]['port'] = 4000
-            if self.sh.const.is_service:
+            if not self.sh.const.is_service:
                 self.sh.cfg.data['plugins'][self.name]['port'] += 100
+            change = True
+        if not 'path' in self.sh.cfg.data['plugins'][self.name]:
+            if not self.sh.const.is_service:
+                self.sh.cfg.data['plugins'][self.name]['path'] = 'www/backend/master'
             change = True
         if change:
              self.sh.cfg.save()
@@ -29,8 +44,12 @@ class plugin(plugins.base):
     def run(self):
         self.sh.log.info('run')
         if self.loaded:
-            self.server = self.lib['webserver'].webserver_run(self.cfg['port'])
+            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'])
 
     def stop(self):
         if self.server:
             self.server.shutdown()
+        try:
+            last_call("http://localhost:"+str(self.cfg['port'])).start()
+        except:
+            pass
