@@ -17,7 +17,7 @@ import signal
 import __main__
 
 import bin.log as logging
-import bin.config_json as config_json
+import bin.config as config
 import bin.module as modul_loader
 import bin.timer as timer
 import bin.values as values
@@ -62,14 +62,12 @@ class smarthome:
             tools.run(self)
             sys.exit()
 
+        ''' Laden der Konfiguration '''
+        cfg_file = self.const.name if self.const.is_service else self.const.name + '.cmd'
+        self.cfg = config.load(self, cfg_file)
+
         ''' Intialiesierung des Loggers '''
         self.log = logging.getLogger(self.basename)
-
-        ''' Laden der Konfiguration '''
-        cfg_file = self.basename
-        if not self.const.is_service: #Nutzen einer config fuer den Start von Console
-            cfg_file += '.cmd'
-        self.cfg = config_json.load(self, cfg_file)
 
         ''' Anpassen des Loggers an Konfiguration '''
         if 'logger' in self.cfg.data:
