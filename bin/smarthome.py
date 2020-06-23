@@ -16,18 +16,17 @@ import subprocess
 import signal
 import __main__
 
-import psutil
-
 import bin.log as logging
 import bin.config_json as config_json
 import bin.module as modul_loader
 import bin.timer as timer
+import bin.values as values
 
 ''' SH globale Variable der Smarthomeklasse '''
 SH = None
 
 def handler(signum, frame):
-''' Handler fuer Signal events kill und KeyboardInterrupt '''
+    ''' Handler fuer Signal events kill und KeyboardInterrupt '''
     global SH
     SH.running = False
     print('Signal handler called with signal', signum)
@@ -35,7 +34,7 @@ def handler(signum, frame):
 class smarthome:
     def __init__(self):
         ''' Initialiesierung der Klasse
-        
+
         Returns:
             Klasse
         '''
@@ -46,16 +45,17 @@ class smarthome:
 
         ''' Setzen der Hauptvariablen '''
         self.running = True
-        self.pid = os.getpid()
-        file = os.path.abspath(__main__.__file__)
-        self.basepath = os.path.dirname(file)
-        self.basename = os.path.splitext(os.path.basename(file))[0]
-        self.is_service = self.__is_service()
+
+        ''' Laden der Konstatnten '''
+        self.const = values.basic()
+
+        self.basepath = self.const.path
+        self.basename = self.const.name
 
         ''' setzen der Hooks fuer Kill und KeyboardInterrupt '''
         signal.signal(signal.SIGINT, handler)
         signal.signal(signal.SIGTERM, handler)
-        
+
         ''' wurde das Programm mit Parametern gestartet ?'''
         if len(sys.argv) > 1:
             import bin.cmd_line_tools as tools
@@ -67,19 +67,19 @@ class smarthome:
 
         ''' Laden der Konfiguration '''
         cfg_file = self.basename
-        if not self.is_service: #Nutzen einer config fuer den Start von Console
+        if not self.const.is_service: #Nutzen einer config fuer den Start von Console
             cfg_file += '.cmd'
         self.cfg = config_json.load(self, cfg_file)
-        
+
         ''' Anpassen des Loggers an Konfiguration '''
         if 'logger' in self.cfg.data:
             logging.update(self, self.log, self.cfg.data['logger'])
         else:
             self.log.error("kein Eintrag fuer logger in der konfiguration")
-            
+
         ''' Laden und Starten des internen Timer-Moduls '''
         self.timer = timer.get(self)
-        
+
         ''' Laden der Module '''
         self.module = []
         modul_loader.scan(self) #suchen nach neuen Modulen
@@ -103,29 +103,21 @@ class smarthome:
         timeout += time.time()
         
         ''' Hauptschleife '''
-        while self.running and (self.is_service or timeout > time.time()):
+        while self.running and (self.const.is_service or timeout > time.time()):
             time.sleep(1)
-            
-        ''' Stoppen der Module '''    
+
+        ''' Stoppen der Module '''
         for mod in self.module:
             mod.stop()
-            
+
         ''' Stoppen des Timers '''
         if not self.timer == None:
             self.timer.stop()
-            
-        ''' Warten auf das Ende aller Threads '''    
+
+        ''' Warten auf das Ende aller Threads '''
         for th in threading.enumerate():
             if not th == threading.main_thread():
                 th.join()
-                
+
         self.log.info("run beendet")
 
-    def __is_service(self):
-        self.log.info("Check Service")
-        ''' Check ob das Programm als Service lauft
-
-        Returns:
-            True wenn Service
-        '''
-        return psutil.Process(self.pid).parent().pid < 5
