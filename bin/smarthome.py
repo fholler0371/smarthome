@@ -21,6 +21,7 @@ import bin.config as config
 import bin.module as modul_loader
 import bin.timer as timer
 import bin.values as values
+import plugins
 
 ''' SH globale Variable der Smarthomeklasse '''
 SH = None
@@ -88,6 +89,9 @@ class smarthome:
                     if mod != None:
                         self.module.append(mod)
                         mod.start()
+
+        ''' Load Module '''
+        self.plugins = plugins.master(self)
 
     def run(self):
         ''' Starten der Haupt Funktion
