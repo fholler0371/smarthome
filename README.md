@@ -1,4 +1,3 @@
-https://api.gitential.com/accounts/2137/projects/2484/badges/code-volume.svg
 
 # smarthome
 
