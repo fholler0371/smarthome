@@ -52,6 +52,13 @@ class webserverHandler(BaseHTTPRequestHandler):
             file = open(path, 'rb')
             self.wfile.write(file.read())
             file.close()
+        elif path.endswith('.css'):
+            self.send_header('Content-Type',
+                             'text/css')
+            self.end_headers()
+            file = open(path, 'rb')
+            self.wfile.write(file.read())
+            file.close()
         else:
             self.send_header('Content-Type',
                              'text/txt; charset=utf-8')
