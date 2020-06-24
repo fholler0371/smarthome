@@ -1,0 +1,44 @@
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
+import threading
+from threading import Thread
+
+import plugins
+
+class Handler(BaseHTTPRequestHandler):
+
+   def __init__(self, log, pfad, bar, *args, **kwargs):
+        self.log = log
+        self.pfad = pfad
+        self.bar = bar
+        super().__init__(*args, **kwargs)
+
+    def log_message(self, format, *args):
+        self.log.info("%s - - [%s] %s\n" % (self.address_string(),self.log_date_time_string(),format%args))
+
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type',
+                         'text/plain; charset=utf-8')
+        self.end_headers()
+        message = threading.currentThread().getName()
+        self.wfile.write(message.encode('utf-8'))
+        self.wfile.write(self.pfad)
+        self.wfile.write(b'\n')
+
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    """Handle requests in a separate thread."""
+
+class plugin(plugins.base):
+    def __init__(self, sh, name):
+        plugins.base.__init__(self, sh, name)
+        self.sh.log.info(name + '__init__')
+        self.loaded = True
+        self.sh.plugins.plugins[name] = self
+
+    def webserver_run(self, port):
+        self.sh.log.info('webserver_run')
+        handler = partial(ExampleHandler,
+        global log
+        log = self.sh.log
+        print(port)
