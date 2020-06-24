@@ -11,9 +11,10 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """Handle requests in a separate thread."""
 
 class webserverHandler(BaseHTTPRequestHandler):
-    def __init__(self, sh, path, qux, *args, **kwargs):
+    def __init__(self, sh, path, lib, qux, *args, **kwargs):
         self.sh = sh
         self.root_path = path
+        self.root_lib = lib
         self.qux = qux
         super().__init__(*args, **kwargs)
 
@@ -24,7 +25,10 @@ class webserverHandler(BaseHTTPRequestHandler):
         path = self.path
         if path.endswith('/'):
             path += 'index.html'
-        path = self.sh.const.path + '/' + self.root_path + '/' + path[1:]
+        if path.startswith('/lib/'):
+            path = self.sh.const.path + '/' + self.root_lib + '/' + path[5:]
+        else:
+            path = self.sh.const.path + '/' + self.root_path + '/' + path[1:]
         path = path.replace('/./', '/').replace('/../', '/').replace('//', '/')
         if not os.path.exists(path):
             self.send_response(404)
@@ -37,6 +41,13 @@ class webserverHandler(BaseHTTPRequestHandler):
         if path.endswith('.html'):
             self.send_header('Content-Type',
                              'text/html; charset=utf-8')
+            self.end_headers()
+            file = open(path, 'rb')
+            self.wfile.write(file.read())
+            file.close()
+        elif path.endswith('.js'):
+            self.send_header('Content-Type',
+                             'application/javascript')
             self.end_headers()
             file = open(path, 'rb')
             self.wfile.write(file.read())
@@ -62,10 +73,10 @@ class plugin(plugins.base):
         self.loaded = True
         self.sh.plugins.plugins[name] = self
 
-    def webserver_run(self, port, path):
+    def webserver_run(self, port, path, lib):
         self.sh.log.info('webserver_run')
         print(port)
-        handler = partial(webserverHandler, self.sh, path, self)
+        handler = partial(webserverHandler, self.sh, path, lib, self)
         server = ThreadedHTTPServer(('0.0.0.0', port), handler)
         th = loopThread(server)
         th.start()
