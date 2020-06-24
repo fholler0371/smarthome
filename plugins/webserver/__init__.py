@@ -19,7 +19,7 @@ class webserverHandler(BaseHTTPRequestHandler):
         super().__init__(*args, **kwargs)
 
     def log_message(self, format, *args):
-        self.sh.log.info("%s - - [%s] %s\n" % (self.address_string(), self.log_date_time_string(),format%args))
+        self.sh.log.info("%s - - [%s] %s" % (self.address_string(), self.log_date_time_string(),format%args))
 
     def do_GET(self):
         path = self.path
