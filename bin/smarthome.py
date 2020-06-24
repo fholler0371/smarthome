@@ -8,11 +8,9 @@ Verlauf:
     2020-06-21 Core erstellt
 """
 
-import os
 import sys
 import time
 import threading
-import subprocess
 import signal
 import __main__
 
@@ -33,6 +31,7 @@ def handler(signum, frame):
     print('Signal handler called with signal', signum)
 
 class smarthome:
+    ''' Haupt Klasse des Programms '''
     def __init__(self):
         ''' Initialiesierung der Klasse
 
@@ -92,7 +91,7 @@ class smarthome:
 
         ''' Load Module '''
         self.plugins = plugins.master(self)
-        self.plugins.load('webserver_backend_master')
+        self.plugins.load('webserver_backend_master') #temporär zum test
         print(self.plugins.plugins)
 
     def run(self):
