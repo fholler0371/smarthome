@@ -123,8 +123,8 @@ class base():
 
     def run(self):
         ''' Dummy Run '''
-         pass
+        pass
 
     def stop(self):
         ''' Dummy Pass'''
-         pass
+        pass

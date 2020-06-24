@@ -37,6 +37,10 @@ class plugin(plugins.base):
             if not self.sh.const.is_service:
                 self.sh.cfg.data['plugins'][self.name]['path'] = 'www/backend/master'
             change = True
+        if not 'lib' in self.sh.cfg.data['plugins'][self.name]:
+            if not self.sh.const.is_service:
+                self.sh.cfg.data['plugins'][self.name]['lib'] = 'www/lib'
+            change = True
         if change:
              self.sh.cfg.save()
         self.cfg = self.sh.cfg.data['plugins'][self.name]
@@ -44,7 +48,7 @@ class plugin(plugins.base):
     def run(self):
         self.sh.log.info('run')
         if self.loaded:
-            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'])
+            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'])
 
     def stop(self):
         if self.server:
