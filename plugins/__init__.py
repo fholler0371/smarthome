@@ -100,30 +100,6 @@ class master():
 
         self.plugins[plugin.name] = plugin
 
-    def create_config(self, defaults):
-        ''' pruefe Konfiguration und setze ggf. defaults
-
-        Param:
-            default: Standardkonfiguration
-        '''
-        change = False
-
-        ''' ist eine Kpnfuguration vorhanden '''
-        if self.name in self.sh.cfg.data['plugins']:
-            self.sh.cfg.data['plugins'][self.name] = {}
-            change = True
-
-        ''' setze ggf. Standard '''
-        val = self.sh.cfg.data['plugins'][self.name]
-        defaults.update(va√l)
-        self.sh.cfg.data['plugins'][self.name] = default
-        if default != val:
-            change = True
-
-        ''' Wenn notwendig speichern der Konfuguration '''
-        if change:
-            self.sh.cfg.save()
-
 class base():
     ''' Basis Klasse mit allgemeinen Funktionen'''
     def __init__(self, sh, name):
@@ -155,6 +131,33 @@ class base():
             else:
                 ok = False
         self.loaded = ok
+
+    def create_config(self, defaults):
+        ''' pruefe Konfiguration und setze ggf. defaults
+
+        Param:
+            default: Standardkonfiguration
+        '''
+        change = False
+
+        ''' ist eine Kpnfuguration vorhanden '''
+        if not (self.name in self.sh.cfg.data['plugins']):
+            self.sh.cfg.data['plugins'][self.name] = {}
+            change = True
+
+        ''' setze ggf. Standard '''
+        val = self.sh.cfg.data['plugins'][self.name]
+        defaults.update(val)
+        self.sh.cfg.data['plugins'][self.name] = defaults
+        if defaults != val:
+            change = True
+
+        ''' Wenn notwendig speichern der Konfuguration '''
+        if change:
+            self.sh.cfg.save()
+
+        ''' setze Konfig '''
+        self.cfg = defaults
 
     def run(self):
         ''' Dummy Run '''
