@@ -18,9 +18,6 @@ Verlauf:
     2020-06-24 Basis erstellt
 """
 
-import urllib.request
-from threading import Thread
-
 import plugins
 
 class plugin(plugins.base):

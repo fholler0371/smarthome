@@ -8,7 +8,8 @@ Todo:
     - Umarbeiten des Mimecodes
 
 Verlauf:
-    2020-06-25 Basis erstellt
+    2020-06-25 Last Call
+    2020-06-24 Basis erstellt
 """
 
 import os
@@ -35,13 +36,12 @@ class last_call(Thread):
         urllib.request.urlopen(self.url)
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    """Handle requests in a separate thread."""
+        """Handle requests in a separate thread."""
 
 class webserverHandler(BaseHTTPRequestHandler):
     ''' Handler fuer Anfragen von den Browsern '''
     def __init__(self, sh, path, lib, api, *args, **kwargs):
         ''' Initialiesierung der Klasse
-
         Param:
             sh: smarthome Object
             path: Pfad der statischen Projekt-dateien
