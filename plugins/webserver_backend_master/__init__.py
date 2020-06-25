@@ -1,7 +1,29 @@
+# -*- coding: utf-8 -*-
+"""Plugins
+
+    Das Plugin stellt den Hauptzugriff für das Smarthome 
+    Backend, es sollte daher auf dem Gateway laufen
+
+    Der spezifische Webcode liegt in www/backend/master
+
+Todo:
+    - api fehlt noch
+    - scan und speichern der Clients
+    - auswahl des Clients
+    - create Config in das Pluginbase verschieben #8
+    - close webserver nach webserver verscieben #6
+    - registrieren ins Base #7
+
+Verlauf:
+    2020-06-25 Basis erstellt
+"""
+
 import urllib.request
 from threading import Thread
+
 import plugins
 
+''' muss in den Webserver '''
 class last_call(Thread):
     def __init(self, url):
         Thread.__init__(srelf)
@@ -12,14 +34,23 @@ class last_call(Thread):
 
 
 class plugin(plugins.base):
+    ''' Klasse des Plugins mit den Standard Parametern '''
     def __init__(self, sh, name):
         plugins.base.__init__(self, sh, name)
         self.sh.log.info(name + '__init__')
+
+        ''' Prüfen der Konfig und sezen ggf. der defaults '''
         self._create_config()
+
+        ''' setzten und pruefen der Abhaengigkeiten '''
         self.require = ['webserver']
         self.get_requirements()
+
+        ''' wenn alles Ok Plugin registrieren '''
         if self.loaded:
             self.sh.plugins.plugins[self.name] = self
+
+        ''' setzen der defaults '''
         self.server = None
 
     def _create_config(self):
@@ -46,11 +77,13 @@ class plugin(plugins.base):
         self.cfg = self.sh.cfg.data['plugins'][self.name]
 
     def run(self):
+        ''' starten des Plugins '''
         self.sh.log.info('run')
         if self.loaded:
             self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'])
 
     def stop(self):
+        ''' stopen des des Plugins zum Ende des Programms '''
         if self.server:
             self.server.shutdown()
         try:
