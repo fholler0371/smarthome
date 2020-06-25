@@ -8,7 +8,8 @@ Todo:
     - Umarbeiten des Mimecodes
 
 Verlauf:
-    2020-06-25 Basis erstellt
+    2020-06-25 Last Call
+    2020-06-24 Basis erstellt
 """
 
 import os
@@ -17,23 +18,37 @@ from threading import Thread
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from functools import partial
+import urllib.request
 
 import plugins
 
+class last_call(Thread):
+    ''' Classe zum senden des Last-Call '''
+    def __init(self, url):
+        ''' Init Funktion
+
+        Param:
+            url: Link der versucht wird
+        '''
+        Thread.__init__(srelf)
+        self.url = url
+
+    def run(self):
+        urllib.request.urlopen(self.url)
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    """Handle requests in a separate thread."""
+        """Handle requests in a separate thread."""
 
 class webserverHandler(BaseHTTPRequestHandler):
     ''' Handler fuer Anfragen von den Browsern '''
     def __init__(self, sh, path, lib, api, *args, **kwargs):
-        ''' Initialiesierung der Klasse '''
-
+        ''' Initialiesierung der Klasse
         Param:
             sh: smarthome Object
             path: Pfad der statischen Projekt-dateien
             lib: Pfad der statischen Dateien die fuer alle Server gelten
             api: Call zur API durch post requests
+        '''
         self.sh = sh
         self.root_path = path
         self.root_lib = lib
@@ -116,7 +131,7 @@ class plugin(plugins.base):
         plugins.base.__init__(self, sh, name)
         self.sh.log.info(name + '__init__')
         self.loaded = True
-        self.sh.plugins.plugins[name] = self
+        self.sh.plugins.register(self)
 
     def webserver_run(self, port, path, lib):
         ''' Startet einen Webserver
@@ -138,5 +153,23 @@ class plugin(plugins.base):
         ''' Starten des Servers '''
         th = loopThread(server)
         th.start()
-        
+
         return server
+
+    def webserver_stop(self, server, port):
+        ''' Stopt den Webserver und sendet Last-Call
+
+        Param:
+            server: server objeckt
+            port: port des servers
+        '''
+        self.sh.log.info('webserver_stop')
+
+        if server:
+            server.shutdown()
+
+        ''' sende Last-Call '''
+        try:
+            last_call("http://localhost:"+str(port)).start()
+        except:
+            pass
