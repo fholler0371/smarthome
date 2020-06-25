@@ -11,27 +11,14 @@ Todo:
     - scan und speichern der Clients
     - auswahl des Clients
     - create Config in das Pluginbase verschieben #8
-    - close webserver nach webserver verscieben #6
     - registrieren ins Base #7
 
 Verlauf:
-    2020-06-25 Basis erstellt
+    2020-06-25 class LastCall entfernt
+    2020-06-24 Basis erstellt
 """
 
-import urllib.request
-from threading import Thread
-
 import plugins
-
-''' muss in den Webserver '''
-class last_call(Thread):
-    def __init(self, url):
-        Thread.__init__(srelf)
-        self.url = url
-
-    def run(self):
-        urllib.request.urlopen(self.url)
-
 
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
@@ -85,8 +72,4 @@ class plugin(plugins.base):
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
         if self.server:
-            self.server.shutdown()
-        try:
-            last_call("http://localhost:"+str(self.cfg['port'])).start()
-        except:
-            pass
+            self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])
