@@ -10,11 +10,11 @@ Todo:
     - api fehlt noch
     - scan und speichern der Clients
     - auswahl des Clients
-    - create Config in das Pluginbase verschieben #8
+    - close webserver nach webserver verscieben #6
     - registrieren ins Base #7
 
 Verlauf:
-    2020-06-25 class LastCall entfernt
+    2020-06-25 Konfiguration in den Base verschieben
     2020-06-24 Basis erstellt
 """
 
@@ -26,8 +26,15 @@ class plugin(plugins.base):
         plugins.base.__init__(self, sh, name)
         self.sh.log.info(name + '__init__')
 
-        ''' Prüfen der Konfig und sezen ggf. der defaults '''
-        self._create_config()
+        ''' Prüfen der Konfig und sezen ggf. der defaults'''
+        val = {
+            'port' : 4000,
+            'path' : 'www/backend/master',
+            'lib' : 'www/lib'
+          }
+        if not self.sh.const.is_service:
+            val['port'] = val['port'] + 100
+        self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
         self.require = ['webserver']

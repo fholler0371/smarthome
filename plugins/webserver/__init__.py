@@ -26,7 +26,6 @@ class last_call(Thread):
     ''' Classe zum senden des Last-Call '''
     def __init(self, url):
         ''' Init Funktion
-
         Param:
             url: Link der versucht wird
         '''
@@ -158,7 +157,6 @@ class plugin(plugins.base):
 
     def webserver_stop(self, server, port):
         ''' Stopt den Webserver und sendet Last-Call
-
         Param:
             server: server objeckt
             port: port des servers
