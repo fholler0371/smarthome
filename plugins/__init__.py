@@ -6,9 +6,9 @@
 
 Todo:
     - scan der Verfügbaren Klassen
-    - Laden der Klassen über das Dict der Konfiguration
 
 Verlauf:
+    2020-06-25 Funktion in Konfugaration verschoben
     2020-06-23 Basis erstellt
 """
 
@@ -99,6 +99,30 @@ class master():
         self.sh.log.info('rgisterer')
 
         self.plugins[plugin.name] = plugin
+
+    def create_config(self, defaults):
+        ''' pruefe Konfiguration und setze ggf. defaults
+
+        Param:
+            default: Standardkonfiguration
+        '''
+        change = False
+
+        ''' ist eine Kpnfuguration vorhanden '''
+        if self.name in self.sh.cfg.data['plugins']:
+            self.sh.cfg.data['plugins'][self.name] = {}
+            change = True
+
+        ''' setze ggf. Standard '''
+        val = self.sh.cfg.data['plugins'][self.name]
+        defaults.update(va�l)
+        self.sh.cfg.data['plugins'][self.name] = default
+        if default != val:
+            change = True
+
+        ''' Wenn notwendig speichern der Konfuguration '''
+        if change:
+            self.sh.cfg.save()
 
 class base():
     ''' Basis Klasse mit allgemeinen Funktionen'''

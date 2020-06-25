@@ -10,12 +10,12 @@ Todo:
     - api fehlt noch
     - scan und speichern der Clients
     - auswahl des Clients
-    - create Config in das Pluginbase verschieben #8
     - close webserver nach webserver verscieben #6
     - registrieren ins Base #7
 
 Verlauf:
-    2020-06-25 Basis erstellt
+    2020-06-25 Konfiguration in den Base verschieben
+    2020-06-24 Basis erstellt
 """
 
 import urllib.request
@@ -23,24 +23,21 @@ from threading import Thread
 
 import plugins
 
-''' muss in den Webserver '''
-class last_call(Thread):
-    def __init(self, url):
-        Thread.__init__(srelf)
-        self.url = url
-
-    def run(self):
-        urllib.request.urlopen(self.url)
-
-
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
     def __init__(self, sh, name):
         plugins.base.__init__(self, sh, name)
         self.sh.log.info(name + '__init__')
 
-        ''' Prüfen der Konfig und sezen ggf. der defaults '''
-        self._create_config()
+        ''' Prüfen der Konfig und sezen ggf. der defaults'''
+        val = {
+            'port' : 4000,
+            'path' : 'www/backend/master',
+            'lib' : 'www/lib'
+          }
+        if not self.sh.const.is_service:
+            val['port'] = val['port'] + 100
+        self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
         self.require = ['webserver']
@@ -85,8 +82,4 @@ class plugin(plugins.base):
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
         if self.server:
-            self.server.shutdown()
-        try:
-            last_call("http://localhost:"+str(self.cfg['port'])).start()
-        except:
-            pass
+            self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])

@@ -17,9 +17,22 @@ from threading import Thread
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from functools import partial
+import urllib.request
 
 import plugins
 
+class last_call(Thread):
+    ''' Classe zum senden des Last-Call '''
+    def __init(self, url):
+        ''' Init Funktion
+        Param:
+            url: Link der versucht wird
+        '''
+        Thread.__init__(srelf)
+        self.url = url
+
+    def run(self):
+        urllib.request.urlopen(self.url)
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """Handle requests in a separate thread."""
@@ -139,5 +152,22 @@ class plugin(plugins.base):
         ''' Starten des Servers '''
         th = loopThread(server)
         th.start()
-        
+
         return server
+
+    def webserver_stop(self, server, port):
+        ''' Stopt den Webserver und sendet Last-Call
+        Param:
+            server: server objeckt
+            port: port des servers
+        '''
+        self.sh.log.info('webserver_stop')
+
+        if server:
+            server.shutdown()
+
+        ''' sende Last-Call '''
+        try:
+            last_call("http://localhost:"+str(port)).start()
+        except:
+            pass
