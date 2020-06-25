@@ -27,13 +27,14 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 class webserverHandler(BaseHTTPRequestHandler):
     ''' Handler fuer Anfragen von den Browsern '''
     def __init__(self, sh, path, lib, api, *args, **kwargs):
-        ''' Initialiesierung der Klasse '''
+        ''' Initialiesierung der Klasse
 
         Param:
             sh: smarthome Object
             path: Pfad der statischen Projekt-dateien
             lib: Pfad der statischen Dateien die fuer alle Server gelten
             api: Call zur API durch post requests
+        '''
         self.sh = sh
         self.root_path = path
         self.root_lib = lib
@@ -116,7 +117,7 @@ class plugin(plugins.base):
         plugins.base.__init__(self, sh, name)
         self.sh.log.info(name + '__init__')
         self.loaded = True
-        self.sh.plugins.plugins[name] = self
+        self.sh.plugins.register(self)
 
     def webserver_run(self, port, path, lib):
         ''' Startet einen Webserver

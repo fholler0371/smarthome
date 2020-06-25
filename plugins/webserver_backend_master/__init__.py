@@ -48,7 +48,7 @@ class plugin(plugins.base):
 
         ''' wenn alles Ok Plugin registrieren '''
         if self.loaded:
-            self.sh.plugins.plugins[self.name] = self
+            self.sh.plugins.register(self)
 
         ''' setzen der defaults '''
         self.server = None
