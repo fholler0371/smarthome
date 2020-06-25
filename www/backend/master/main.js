@@ -19,7 +19,7 @@ requirejs(['jquery'], function( $ ) {
   $(document).ready(function() {
     $('body').append('<div id="mainSplitter"><div id="panel-master">Panel 1</div><div id="panel-clients">Panel 2</div></div>')
     requirejs(['jqxsplitter'], function() {
-      $('#mainSplitter').jqxSplitter({height: '100%', width: '100%', 'resizable': false, orientation: 'horizontal', panels: [{ size: 100 }] });
+      $('#mainSplitter').jqxSplitter({height: '100%', width: '100%', 'resizable': false, orientation: 'horizontal', panels: [{ size: 80 }] });
       console.log( $ )
     });
   });
