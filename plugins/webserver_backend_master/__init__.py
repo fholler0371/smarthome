@@ -74,9 +74,12 @@ class plugin(plugins.base):
         ''' starten des Plugins '''
         self.sh.log.info('run')
         if self.loaded:
-            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'])
+            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api)
 
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
         if self.server:
             self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])
+
+    def api(self, data_in):
+        return data_in['data']

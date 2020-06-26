@@ -3,13 +3,17 @@ requirejs.config({
     paths: {
         jquery: 'jquery/jquery-3.5.1.min',
         jqxcore: 'jqwidgets/jqxcore',
-        jqxsplitter: 'jqwidgets/jqxsplitter'
+        jqxsplitter: 'jqwidgets/jqxsplitter',
+        jqxbutton: 'jqwidgets/jqxbuttons'
     },
     shim:{
         jqxcore : {
             deps : ['jquery']
           },
         jqxsplitter : {
+            deps : ['jqxcore']
+          },
+        jqxbutton : {
             deps : ['jqxcore']
           }
     }

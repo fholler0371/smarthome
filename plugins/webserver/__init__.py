@@ -13,6 +13,7 @@ Verlauf:
 """
 
 import os
+import json
 import threading
 from threading import Thread
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -57,6 +58,16 @@ class webserverHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         ''' sendet die logs an den Standard logger '''
         self.sh.log.info("%s - - [%s] %s" % (self.address_string(), self.log_date_time_string(),format%args))
+
+    def do_POST(self):
+        content_len = int(self.headers['Content-Length'])
+        data = json.dumps(self.api({'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        size = len(data)
+        self.send_header('Content-Length', str(size))
+        self.end_headers()
+        self.wfile.write(data)
 
     def do_GET(self):
         ''' Bearbeitung von get requests d.h. statischen Anfragen '''
@@ -127,13 +138,14 @@ class plugin(plugins.base):
         self.loaded = True
         self.sh.plugins.register(self)
 
-    def webserver_run(self, port, path, lib):
+    def webserver_run(self, port, path, lib, api):
         ''' Startet einen Webserver
 
         Param:
             port: Port an dem der Server hoeren soll
             path: Pfad der statischen Dateien
             lib: Pfad der Standard-Bibliotheken
+            api: Funktion fuer Post calls
 
         Return:
             Object des HTTPServer
@@ -141,7 +153,7 @@ class plugin(plugins.base):
         self.sh.log.info('webserver_run')
 
         ''' Erstellen des Servers '''
-        handler = partial(webserverHandler, self.sh, path, lib, self)
+        handler = partial(webserverHandler, self.sh, path, lib, api)
         server = ThreadedHTTPServer(('0.0.0.0', port), handler)
 
         ''' Starten des Servers '''
