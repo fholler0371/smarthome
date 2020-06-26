@@ -85,23 +85,18 @@ class webserverHandler(BaseHTTPRequestHandler):
             self.wfile.write('error 404'.encode('utf-8'))
             return
         self.send_response(200)
+        known = True
         if path.endswith('.html'):
-            self.send_header('Content-Type',
-                             'text/html; charset=utf-8')
-            self.end_headers()
-            file = open(path, 'rb')
-            self.wfile.write(file.read())
-            file.close()
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
         elif path.endswith('.js'):
-            self.send_header('Content-Type',
-                             'application/javascript')
-            self.end_headers()
-            file = open(path, 'rb')
-            self.wfile.write(file.read())
-            file.close()
+            self.send_header('Content-Type', 'application/javascript')
         elif path.endswith('.css'):
-            self.send_header('Content-Type',
-                             'text/css')
+            self.send_header('Content-Type', 'text/css')
+        else:
+            known = False
+        if known:
+            size = os.path.getsize(path)
+            self.send_header('Content-Length', str(size))
             self.end_headers()
             file = open(path, 'rb')
             self.wfile.write(file.read())
