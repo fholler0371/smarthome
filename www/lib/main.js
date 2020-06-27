@@ -9,13 +9,17 @@ requirejs.config({
         jqxlistbox: 'jqwidgets/jqxlistbox',
         jqxscrollbar: 'jqwidgets/jqxscrollbar',
         jqxdatatable: 'jqwidgets/jqxdatatable',
-        jqxdata: 'jqwidgets/jqxdata'
+        jqxdata: 'jqwidgets/jqxdata',
+        jqxtabs: 'jqwidgets/jqxtabs'
     },
     shim:{
         jqxcore : {
             deps : ['jquery']
           },
         jqxsplitter : {
+            deps : ['jqxcore']
+          },
+        jqxtabs : {
             deps : ['jqxcore']
           },
         jqxsdata : {

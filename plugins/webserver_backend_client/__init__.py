@@ -28,6 +28,19 @@ import psutil
 
 import bin.ping as ping
 
+class systemUpgradeThread(Thread):
+    def __init__(self, log):
+        Thread.__init__(self)
+        self.log = log
+
+    def run(self):
+        self.log.info('System Update Start')
+        responce = subprocess.Popen(('sudo apt-get update').split(' '), stdout=subprocess.PIPE).stdout.read()
+        self.log.info('System Update Stop')
+        self.log.info('System Upgrade Start')
+        responce = subprocess.Popen(('sudo apt-get upgrade -y').split(' '), stdout=subprocess.PIPE).stdout.read()
+        self.log.info('System Upgrade Stop')
+
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
     def __init__(self, sh, name):
@@ -102,13 +115,21 @@ class plugin(plugins.base):
             out['uptime'] = str(value) + 'd ' + out['uptime']
         return out
 
+    def _system_update(self):
+        th = systemUpgradeThread(self.sh.log)
+        th.start()
+        print('update')
+
     def api(self, data_in):
         data = data_in['data']
         if data['cmd'] == 'get_hostname':
             return {'hostname': os.uname()[1]}
         elif data['cmd'] == 'client_get_plugins':
-            return {'plugins': [{'label':'Status', 'name':'state'}]}
+            return {'plugins': [{'label':'System', 'name':'system'}]}
         elif data['cmd'] == 'client_get_state':
             return self._get_state()
+        elif data['cmd'] == 'client_system_update':
+            self._system_update()
+            return {}
         return data_in['data']
 
