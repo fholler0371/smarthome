@@ -3,6 +3,8 @@ from threading import Thread
 import ipaddress
 import time
 
+import netifaces
+
 send = 0
 receive = 0
 hosts = []
@@ -50,6 +52,25 @@ def scan(log, range):
     while timeout > time.time() and (send - receive) > 0:
         time.sleep(0.5)
     return hosts
+
+def guess_network():
+    net = []
+    for interface in netifaces.interfaces():
+        if 'broadcast' in netifaces.ifaddresses(interface)[netifaces.AF_INET][0]:
+            net.append(interface)
+    gw = netifaces.gateways()['default'][netifaces.AF_INET][1]
+    interface = None
+    if len(net) > 1:
+        for i in net:
+            if str(i) != str(gw):
+                interface = i
+    elif len(net) > 0:
+        interface = net[0]
+    if interface == None:
+        print('kein Netzwerk gefunden')
+        return ''
+    addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
+    return addr['addr'] + '/' + addr['netmask']
 
 def ping(log, host):
     log.info('Ping: '+host)
