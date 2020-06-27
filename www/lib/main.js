@@ -7,13 +7,18 @@ requirejs.config({
         jqxbutton: 'jqwidgets/jqxbuttons',
         jqxdropdownlist: 'jqwidgets/jqxdropdownlist',
         jqxlistbox: 'jqwidgets/jqxlistbox',
-        jqxscrollbar: 'jqwidgets/jqxscrollbar'
+        jqxscrollbar: 'jqwidgets/jqxscrollbar',
+        jqxdatatable: 'jqwidgets/jqxdatatable',
+        jqxdata: 'jqwidgets/jqxdata'
     },
     shim:{
         jqxcore : {
             deps : ['jquery']
           },
         jqxsplitter : {
+            deps : ['jqxcore']
+          },
+        jqxsdata : {
             deps : ['jqxcore']
           },
         jqxdropdownlist : {
@@ -25,13 +30,31 @@ requirejs.config({
         jqxscrollbar : {
             deps : ['jqxbutton']
           },
+        jqxdatatable : {
+            deps : ['jqxscrollbar', 'jqxdata']
+          },
         jqxbutton : {
             deps : ['jqxcore']
           }
     }
 });
 
-
-requirejs(['/start.js'], function(mod) {
+requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
+  window.smcall = function(data, cb) {
+    if (('server' in window) && ('ip' in window.server)) {
+      data.client = window.server.ip
+    }
+    $.ajax({
+      url: '/api',
+      context: cb,
+      method: 'POST',
+      crossDomain: true,
+      data: JSON.stringify(data),
+      dataType: 'json'
+    }).done(function(data) {
+      this(data)
+    })
+  }
+  $.jqx.theme = 'metrodark';
   mod.start()
 })

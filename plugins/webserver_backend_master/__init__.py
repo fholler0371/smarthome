@@ -48,6 +48,7 @@ class scanThread(Thread):
         self.pl.sh.cfg.save()
         self.pl.scanning = False
 
+
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
     def __init__(self, sh, name):
@@ -102,6 +103,13 @@ class plugin(plugins.base):
             th.start()
             self.scanning = True
 
+    def getClientAPI(self, data):
+        jdata = json.dumps(data).encode()
+        out = {}
+        with urllib.request.urlopen('http://' + data['client'] + ':' + str(self.cfg['client_port']) + '/api', jdata) as f:
+            out = json.loads(f.read().decode())
+        return out
+
     def api(self, data_in):
         data = data_in['data']
         if data['cmd'] == 'scan_clients':
@@ -111,4 +119,6 @@ class plugin(plugins.base):
             return {'scan_state': self.scanning}
         elif data['cmd'] == 'get_remote_hosts':
             return {'hosts': self.cfg['hosts']}
+        elif data['cmd'].startswith('client'):
+            return self.getClientAPI(data)
         return data_in['data']
