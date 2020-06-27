@@ -103,6 +103,8 @@ class webserverHandler(BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/javascript')
         elif path.endswith('.css'):
             self.send_header('Content-Type', 'text/css')
+        elif path.endswith('.png'):
+            self.send_header('Content-Type', 'image/png')
         else:
             known = False
         if known:

@@ -59,7 +59,8 @@ class plugin(plugins.base):
             'port' : 4000,
             'client_port' : 4050,
             'path' : 'www/backend/master',
-            'lib' : 'www/lib'
+            'lib' : 'www/lib',
+            'hosts': []
           }
         if not self.sh.const.is_service:
             val['port'] = val['port'] + 100
@@ -105,4 +106,9 @@ class plugin(plugins.base):
         data = data_in['data']
         if data['cmd'] == 'scan_clients':
             self._scan_hosts()
+            return {'scan_state': self.scanning}
+        elif data['cmd'] == 'get_scan_state':
+            return {'scan_state': self.scanning}
+        elif data['cmd'] == 'get_remote_hosts':
+            return {'hosts': self.cfg['hosts']}
         return data_in['data']

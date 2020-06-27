@@ -29,7 +29,7 @@ class master():
 
         ''' Erstellung einer Sektion Plugins in der Konfiguration, wenn noch
         nicht vorhanden '''
-        if not 'plugins' in self.sh.cfg.data:
+        if not ('plugins' in self.sh.cfg.data):
             self.sh.cfg.data['plugins'] = {}
             self.sh.cfg.save()
 

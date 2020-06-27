@@ -42,11 +42,11 @@ class cfg:
         
         ''' gegebenfalls versuch mit default '''
         if not os.path.exists(file_name):
-            file_name += 'default'
+            file_name += '.default'
             
         ''' Laden der Datei '''    
         try:
-            f = open(self.name+'.default', 'r+')
+            f = open(file_name, 'r+')
             self.data = json.loads(f.read())
             f.close()
         except Exception as e:
