@@ -6,7 +6,8 @@ define(['jquery'], function($) {
 
       html = '<div id="mainSplitter"><div id="panel-master"><div id="host_select"></div>'
       html += '<input type="button" value="Scannen nach Clients" id="scan" />'
-      $('body').append(html + '</div><div id="client_area">Panel2</div></div>')
+      html += '</div><div style="height: 100%, width: 100%"><div id="client_area"><h1>'
+      $('body').append(html + '<p style="text-align: center">Bitte Client aussuchen</p></h1></div></div></div>')
 
       get_remote_hosts = function() {
         window.smcall({cmd:'get_remote_hosts'}, function(data) {
@@ -50,12 +51,12 @@ define(['jquery'], function($) {
                 window.server.ip = window.server.hosts[i].ip
               }
             }
-            console.log(window.server)
+            window.client.init()
           }
         })
         get_remote_hosts()
         requirejs(['/lib/client.js'], function(mod) {
-          mod.start()
+          window.client = mod.start
         })
       });
     }
