@@ -1,25 +1,12 @@
 define(['jquery'], function($) {
   return  {
     start : function() {
-      window.smcall = function(data, cb) {
-        $.ajax({
-          url: '/api',
-          context: cb,
-          method: 'POST',
-          crossDomain: true,
-          data: JSON.stringify(data),
-          dataType: 'json'
-        }).done(function(data) {
-          this(data)
-        })
-      }
-
       window.server = {}
       window.server.hosts = []
 
       html = '<div id="mainSplitter"><div id="panel-master"><div id="host_select"></div>'
       html += '<input type="button" value="Scannen nach Clients" id="scan" />'
-      $('body').append(html + '</div><div id="panel-clients">Panel2</div></div>')
+      $('body').append(html + '</div><div id="client_area">Panel2</div></div>')
 
       get_remote_hosts = function() {
         window.smcall({cmd:'get_remote_hosts'}, function(data) {
@@ -67,8 +54,10 @@ define(['jquery'], function($) {
           }
         })
         get_remote_hosts()
+        requirejs(['/lib/client.js'], function(mod) {
+          mod.start()
+        })
       });
-
     }
   }
 });

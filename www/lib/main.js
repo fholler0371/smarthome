@@ -31,7 +31,18 @@ requirejs.config({
     }
 });
 
-
-requirejs(['/start.js'], function(mod) {
+requirejs(['jquery', '/start.js'], function($, mod) {
+  window.smcall = function(data, cb) {
+    $.ajax({
+      url: '/api',
+      context: cb,
+      method: 'POST',
+      crossDomain: true,
+      data: JSON.stringify(data),
+      dataType: 'json'
+    }).done(function(data) {
+      this(data)
+    })
+  }
   mod.start()
 })
