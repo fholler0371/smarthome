@@ -91,7 +91,7 @@ class smarthome:
 
         ''' Load Module '''
         self.plugins = plugins.master(self)
-        self.plugins.load('webserver_backend_master') #temporär zum test
+        self.plugins.load(['webserver_backend_master', 'webserver_backend_client']) #temporär zum test
         print(self.plugins.plugins)
 
     def run(self):

@@ -18,35 +18,11 @@ Verlauf:
     2020-06-24 Basis erstellt
 """
 
-from threading import Thread
-import json
-import urllib.request
-
+import os
 import plugins
+from threading import Thread
+
 import bin.ping as ping
-
-class scanThread(Thread):
-    def __init__(self, log, net, pl, client_port):
-        Thread.__init__(self)
-        self.net = net
-        self.pl = pl
-        self.log = log
-        self.client_port = client_port
-
-    def run(self):
-        ping_hosts = ping.scan(self.log, self.net)
-        data = json.dumps({'cmd':'get_hostname'}).encode()
-        hosts = []
-        for host in ping_hosts:
-            try:
-                with urllib.request.urlopen('http://' + host + ':' + str(self.client_port) + '/api', data) as f:
-                    hosts.append({'ip': host, 'hostname': json.loads(f.read().decode())['hostname']})
-            except:
-                pass
-        self.pl.cfg['hosts'] = hosts
-        self.pl.sh.cfg.data['plugins'][self.pl.name]['hosts'] = hosts
-        self.pl.sh.cfg.save()
-        self.pl.scanning = False
 
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
@@ -56,14 +32,12 @@ class plugin(plugins.base):
 
         ''' Prüfen der Konfig und sezen ggf. der defaults'''
         val = {
-            'port' : 4000,
-            'client_port' : 4050,
-            'path' : 'www/backend/master',
+            'port' : 4050,
+            'path' : 'www/backend/client',
             'lib' : 'www/lib'
           }
         if not self.sh.const.is_service:
             val['port'] = val['port'] + 100
-            val['client_port'] = val['client_port'] + 100
         self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
@@ -92,17 +66,9 @@ class plugin(plugins.base):
     def _scan_hosts(self):
         if not('network' in self.cfg):
             net = ping.guess_network()
-            if net != '':
-                self.cfg['network'] = net
-                self.sh.cfg.data['plugins'][self.name]['network'] = net
-                self.sh.cfg.save()
-        if 'network' in self.cfg:
-            th = scanThread(self.sh.log, self.cfg['network'], self, self.cfg['client_port'])
-            th.start()
-            self.scanning = True
-
     def api(self, data_in):
         data = data_in['data']
-        if data['cmd'] == 'scan_clients':
-            self._scan_hosts()
+        if data['cmd'] == 'get_hostname':
+            return {'hostname': os.uname()[1]}
         return data_in['data']
+
