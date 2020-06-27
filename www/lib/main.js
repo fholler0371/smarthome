@@ -31,8 +31,11 @@ requirejs.config({
     }
 });
 
-requirejs(['jquery', '/start.js'], function($, mod) {
+requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
   window.smcall = function(data, cb) {
+    if (('server' in window) && ('ip' in window.server)) {
+      data.client = window.server.ip
+    }
     $.ajax({
       url: '/api',
       context: cb,
@@ -44,5 +47,6 @@ requirejs(['jquery', '/start.js'], function($, mod) {
       this(data)
     })
   }
+  $.jqx.theme = 'metrodark';
   mod.start()
 })

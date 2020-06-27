@@ -70,5 +70,7 @@ class plugin(plugins.base):
         data = data_in['data']
         if data['cmd'] == 'get_hostname':
             return {'hostname': os.uname()[1]}
+        elif data['cmd'] == 'client_get_plugins':
+            return {'plugins': [{'label':'Status', 'name':'state'}]}
         return data_in['data']
 
