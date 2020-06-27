@@ -7,13 +7,18 @@ requirejs.config({
         jqxbutton: 'jqwidgets/jqxbuttons',
         jqxdropdownlist: 'jqwidgets/jqxdropdownlist',
         jqxlistbox: 'jqwidgets/jqxlistbox',
-        jqxscrollbar: 'jqwidgets/jqxscrollbar'
+        jqxscrollbar: 'jqwidgets/jqxscrollbar',
+        jqxdatatable: 'jqwidgets/jqxdatatable',
+        jqxdata: 'jqwidgets/jqxdata'
     },
     shim:{
         jqxcore : {
             deps : ['jquery']
           },
         jqxsplitter : {
+            deps : ['jqxcore']
+          },
+        jqxsdata : {
             deps : ['jqxcore']
           },
         jqxdropdownlist : {
@@ -24,6 +29,9 @@ requirejs.config({
           },
         jqxscrollbar : {
             deps : ['jqxbutton']
+          },
+        jqxdatatable : {
+            deps : ['jqxscrollbar', 'jqxdata']
           },
         jqxbutton : {
             deps : ['jqxcore']

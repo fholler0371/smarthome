@@ -4,7 +4,7 @@ define(['jquery'], function($) {
       init : function() {
         window.client_data = {}
         requirejs(['jqxsplitter', 'jqxlistbox'], function() {
-          $('#client_area').html('<div id="clint_left"><div id="client_plugins"></div></div><div id="clint_right"></div>')
+          $('#client_area').html('<div id="client_left"><div id="client_plugins"></div></div><div id="client_right"></div>')
           $('#client_area').jqxSplitter({height: '100%', width: '100%', panels: [{ size: 400, min: 250}, {min: 250}]})
           window.smcall({cmd:'client_get_plugins'}, function(data) {
             window.client_data.plugins = data.plugins
@@ -19,9 +19,14 @@ define(['jquery'], function($) {
               if (args) {
                 var index = args.index
                 window.client_data.plugin = window.client_data.plugins[index]
-                requirejs(['plugins/' + window.client_data.plugin.name], function() {
-                  console.log(window.client_data)
-                })
+                if (window.client_data.plugin.name in window.client) {
+                  window.client[window.client_data.plugin.name].func()
+                } else {
+                  requirejs(['plugins/' + window.client_data.plugin.name], function(mod) {
+                    window.client[window.client_data.plugin.name] = mod
+                    window.client[window.client_data.plugin.name].func()
+                  })
+                }
               }
             })
           })
