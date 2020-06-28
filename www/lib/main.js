@@ -15,7 +15,9 @@ requirejs.config({
         jqxgrid_selection: 'jqwidgets/jqxgrid.selection',
         jqxgrid_edit: 'jqwidgets/jqxgrid.edit',
         jqxcheckbox: 'jqwidgets/jqxcheckbox',
-        jqxpanel: 'jqwidgets/jqxpanel'
+        jqxpanel: 'jqwidgets/jqxpanel',
+        jqxinput: 'jqwidgets/jqxinput',
+        jqxnumberinput: 'jqwidgets/jqxnumberinput'
     },
     shim:{
         jqxcore : {
