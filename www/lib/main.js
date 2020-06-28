@@ -14,7 +14,8 @@ requirejs.config({
         jqxgrid: 'jqwidgets/jqxgrid',
         jqxgrid_selection: 'jqwidgets/jqxgrid.selection',
         jqxgrid_edit: 'jqwidgets/jqxgrid.edit',
-        jqxcheckbox: 'jqwidgets/jqxcheckbox'
+        jqxcheckbox: 'jqwidgets/jqxcheckbox',
+        jqxpanel: 'jqwidgets/jqxpanel'
     },
     shim:{
         jqxcore : {
@@ -39,6 +40,9 @@ requirejs.config({
             deps : ['jqxlistbox']
           },
         jqxlistbox : {
+            deps : ['jqxscrollbar']
+          },
+        jqxpanel : {
             deps : ['jqxscrollbar']
           },
         jqxscrollbar : {

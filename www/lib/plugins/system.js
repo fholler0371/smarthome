@@ -1,8 +1,9 @@
-define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit'], function($) {
+define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit', 'jqxpanel'],
+    function($) {
   return {
     func : function() {
-      html = '<div id="system_tabs"><ul><li>Status</li><li>Wartung</li><li>Plugins</li></ul><div id="system_status"></div>'
-      html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div></div>'
+      html = '<div id="system_tabs"><ul><li>Status</li><li>Wartung</li><li>Plugins</li><li>Log</li></ul><div id="system_status"></div>'
+      html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div><div><div id="system_log"></div></div></div>'
       $('#client_right').html(html)
       $('#system_tabs').jqxTabs({ width: '100%', height: '100%', position: 'top'})
       $('#sytem_tool').html('<input type="button" value="update/upgrade" id="1" />')
@@ -89,17 +90,27 @@ define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_sele
           })
         })
       }
+      calltab3 = function() {
+        window.smcall({cmd:'client_system_logs'}, function(data) {
+          $('#system_log').jqxPanel('clearcontent')
+          $('#system_log').jqxPanel('append', data.log)
+        })
+      }
       $('#system_tabs').on('selected', function (event) {
         var selectedTab = event.args.item
         if (selectedTab == 0) {
           calltab0()
         } else if (selectedTab == 2) {
           calltab2()
+        } else if (selectedTab == 3) {
+          calltab3()
         } else {
           console.log(selectedTab)
         }
       });
-      $("#system_plugins").parent().css('overflow', 'hidden')
+      $("#system_plugins, #system_log").parent().css('overflow', 'hidden')
+      $("#system_log").jqxPanel({ width: '100%', height: '100%'});
+      $("#system_log").parent().css('overflow', 'hidden')
       calltab0()
     }
   }

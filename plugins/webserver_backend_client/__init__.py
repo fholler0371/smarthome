@@ -28,6 +28,7 @@ import psutil
 
 import bin.ping as ping
 import bin.config as config
+import bin.log as log
 
 class systemUpgradeThread(Thread):
     def __init__(self, log):
@@ -184,6 +185,17 @@ class plugin(plugins.base):
             del self.sh.cfg.data['plugins'][data['name']]
         self.sh.cfg.save()
 
+    def _system_plugin_logs(self):
+        f = open(log.file_name, 'r+')
+        lines = f.read().split('\n')
+        f.close()
+        lenarray = len(lines) - 2
+        out = []
+        while lenarray > -1:
+            out.append(lines[lenarray])
+            lenarray -= 1
+        return '<br>'.join(out)
+
     def api(self, data_in):
         data = data_in['data']
         if data['cmd'] == 'get_hostname':
@@ -209,5 +221,6 @@ class plugin(plugins.base):
         elif data['cmd'] == 'client_system_plugin_change':
             self._system_plugin_change(data)
             return {}
+        elif data['cmd'] == 'client_system_logs':
+            return {'log': self._system_plugin_logs()}
         return data_in['data']
-
