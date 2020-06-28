@@ -29,6 +29,11 @@ define(['jquery'], function($) {
                 }
               }
             })
+            window.client_data.plugin = window.client_data.plugins[0]
+            requirejs(['plugins/' + window.client_data.plugin.name], function(mod) {
+              window.client[window.client_data.plugin.name] = mod
+              window.client[window.client_data.plugin.name].func()
+            })
           })
         })
       }

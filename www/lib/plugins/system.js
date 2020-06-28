@@ -47,9 +47,17 @@ define(['jquery', 'jqxdatatable', 'jqxtabs'], function($) {
           $('#state_table').css('margin', '10px')
         })
       }
+      calltab2 = function() {
+      }
       $('#system_tabs').on('selected', function (event) {
         var selectedTab = event.args.item
-        calltab0()
+        if (selectedTab == 0) {
+          calltab0()
+        } else if (selectedTab == 2) {
+          calltab2()
+        } else {
+          console.log(selectedTab)
+        }
       });
       calltab0()
     }

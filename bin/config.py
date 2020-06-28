@@ -14,37 +14,40 @@ Verlauf:
 import os
 import json
 
+import yaml
+
 class cfg:
     ''' Klasse zum laden der Konfigurationen '''
-    def __init__(self, sh, file, format= 'json'):
-        ''' Init Proezdur 
-        
+    def __init__(self, sh, file, format= 'yaml'):
+        ''' Init Proezdur
+
         Param:
             sh: referenz zum SmartHome Objekt
             file: der Dateiname
             format: >> aktuell nicht unterstützt
         '''
-        
+
         ''' Da beim Start das Logging noch nicht verfügbar ist, wird die Log-
         Klasse in der Datei abgeprueft
         '''
         if hasattr(sh, 'log'):
             sh.log.info('__init__')
-            
+
         self.sh = sh
         self.data = {}
-        
+        self.format = format
+
         ''' Erstellen des vollständigen Namen des Files '''
         self.name = sh.const.path + '/etc/' + file
         if format == 'json':
             self.name += '.json'
         file_name = self.name
-        
+
         ''' gegebenfalls versuch mit default '''
         if not os.path.exists(file_name):
             file_name += '.default'
-            
-        ''' Laden der Datei '''    
+
+        ''' Laden der Datei '''
         try:
             f = open(file_name, 'r+')
             self.data = json.loads(f.read())
@@ -52,8 +55,8 @@ class cfg:
         except Exception as e:
             if hasattr(sh, 'log'):
                 sh.log.error(str(e))
-                
-        ''' wenn in der Datei Objekt mit dem Namen nice, "schoenees" Speichern 
+
+        ''' wenn in der Datei Objekt mit dem Namen nice, "schoenees" Speichern
         der Datei'''
         if 'nice' in self.data:
              del self.data['nice']
@@ -66,15 +69,19 @@ class cfg:
         f = open(self.name, 'w')
         f.write(json.dumps(self.data, indent=2, sort_keys=True))
         f.close()
+        if self.format == 'json':
+            f = open(self.name[:-5]+'.yaml', 'w')
+            yaml.dump(self.data, f, default_flow_style=False)
+            f.close()
 
-def load(sh, file, format= 'json'):
+def load(sh, file, format= 'yaml'):
     ''' Kurz form zum erstellen der Klasse, Parameter werden direkt ueber-
     gebeben
-    
+
     Return:
         Klasse mit Konfiguration
     '''
     if hasattr(sh, 'log'):
         sh.log.info('load: '+file)
-    
+
     return cfg(sh, file, format)
