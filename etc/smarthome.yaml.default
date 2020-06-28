@@ -5,5 +5,4 @@ plugins:
   webserver_backend_client:
     lib: www/lib
     path: www/backend/client
-    port: 4150
-timeout: 600
+    port: 4050
