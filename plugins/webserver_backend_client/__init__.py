@@ -41,6 +41,15 @@ class systemUpgradeThread(Thread):
         responce = subprocess.Popen(('sudo apt-get upgrade -y').split(' '), stdout=subprocess.PIPE).stdout.read()
         self.log.info('System Upgrade Stop')
 
+class systemRebootThread(Thread):
+    def __init__(self, log):
+        Thread.__init__(self)
+        self.log = log
+
+    def run(self):
+        self.log.info('System Reboot')
+        responce = subprocess.Popen(('sudo reboot').split(' '), stdout=subprocess.PIPE).stdout.read()
+
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
     def __init__(self, sh, name):
@@ -113,10 +122,24 @@ class plugin(plugins.base):
         value = int(value/24)
         if value > 0:
             out['uptime'] = str(value) + 'd ' + out['uptime']
+        value = int(time.time() - self.sh.const.start_time)
+        out['shtime'] = ('0'+str(value % 60))[-2:]
+        value = int(value/60)
+        out['shtime'] = ('0'+str(value % 60))[-2:] + ':' + out['shtime']
+        value = int(value/60)
+        out['shtime'] = ('0'+str(value % 24))[-2:] + ':' + out['shtime']
+        value = int(value/24)
+        if value > 0:
+            out['shtime'] = str(value) + 'd ' + out['shtime']
         return out
 
     def _system_update(self):
         th = systemUpgradeThread(self.sh.log)
+        th.start()
+        print('update')
+
+    def _system_reboot(self):
+        th = systemRebootThread(self.sh.log)
         th.start()
         print('update')
 
@@ -130,6 +153,9 @@ class plugin(plugins.base):
             return self._get_state()
         elif data['cmd'] == 'client_system_update':
             self._system_update()
+            return {}
+        elif data['cmd'] == 'client_system_reboot':
+            self._system_reboot()
             return {}
         return data_in['data']
 
