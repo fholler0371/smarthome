@@ -1,8 +1,8 @@
-define(['jquery', 'jqxdatatable', 'jqxtabs'], function($) {
+define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit'], function($) {
   return {
     func : function() {
       html = '<div id="system_tabs"><ul><li>Status</li><li>Wartung</li><li>Plugins</li></ul><div id="system_status"></div>'
-      html += '<div id="sytem_tool"></div><div></div></div>'
+      html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div></div>'
       $('#client_right').html(html)
       $('#system_tabs').jqxTabs({ width: '100%', height: '100%', position: 'top'})
       $('#sytem_tool').html('<input type="button" value="update/upgrade" id="1" />')
@@ -47,10 +47,59 @@ define(['jquery', 'jqxdatatable', 'jqxtabs'], function($) {
           $('#state_table').css('margin', '10px')
         })
       }
+      calltab2 = function() {
+        window.smcall({cmd:'client_system_plugins'}, function(data) {
+          var source = {
+            localdata: data,
+            datatype: "array",
+            datafields: [
+              { name: 'name', type: 'string' },
+              { name: 'friendly', type: 'string' },
+              { name: 'active', type: 'bool' },
+              { name: 'background', type: 'bool' },
+              { name: 'description', type: 'string' }
+            ]
+          }
+          var dataAdapter = new $.jqx.dataAdapter(source, {
+            downloadComplete: function (data, status, xhr) { },
+            loadComplete: function (data) { },
+            loadError: function (xhr, status, error) { }
+          })
+          var cellbeginedit = function (row, datafield, columntype, value) {
+            var data = $('#system_plugins').jqxGrid('getrowdatabyid', row);
+            return !data.background
+          }
+          $("#system_plugins").jqxGrid({
+            width: '100%',
+            height: '100%',
+            source: dataAdapter,
+            editable: true,
+            columns: [
+              { text: 'Plugin', editable: false, datafield: 'name', width: 200 },
+              { text: 'Name',  editable: false, datafield: 'friendly', width: 200 },
+              { text: 'Aktiv', columntype: 'checkbox', cellbeginedit: cellbeginedit, datafield: 'active', width: 100 },
+              { text: 'Background',  editable: false, columntype: 'checkbox', datafield: 'background', width: 100 },
+              { text: 'Beschreibung',  editable: false, datafield: 'description'}
+            ]
+          })
+          $("#system_plugins").on('cellendedit', function (event) {
+            var args = event.args
+            var data = $('#system_plugins').jqxGrid('getrowdatabyid', args.rowindex);
+            window.smcall({cmd:'client_system_plugin_change', 'name': data.name, 'value': args.value}, function(data) {})
+          })
+        })
+      }
       $('#system_tabs').on('selected', function (event) {
         var selectedTab = event.args.item
-        calltab0()
+        if (selectedTab == 0) {
+          calltab0()
+        } else if (selectedTab == 2) {
+          calltab2()
+        } else {
+          console.log(selectedTab)
+        }
       });
+      $("#system_plugins").parent().css('overflow', 'hidden')
       calltab0()
     }
   }

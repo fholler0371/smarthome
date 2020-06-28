@@ -27,6 +27,7 @@ import subprocess
 import psutil
 
 import bin.ping as ping
+import bin.config as config
 
 class systemUpgradeThread(Thread):
     def __init__(self, log):
@@ -161,6 +162,28 @@ class plugin(plugins.base):
         th = systemInstallThread(self.sh.log, self.sh)
         th.start()
 
+    def _system_plugins(self):
+        out = []
+        for name in os.listdir(self.sh.const.path + '/plugins'):
+           if not name.startswith('__'):
+               cfg = config.load(self.sh, name + '/properties' , path='plugins')
+               if cfg.data != {}:
+                   out.append({'name': name, 'active': name in self.sh.plugins.plugins, 'background': cfg.data['background'],
+                     'friendly': cfg.data['friendly'], 'description': cfg.data['description']})
+        return out
+
+    def _system_plugin_change(self, data):
+        if data['value']:
+            if ('__' + data['name'] + '__') in self.sh.cfg.data['plugins']:
+                self.sh.cfg.data['plugins'][data['name']] = self.sh.cfg.data['plugins']['__' + data['name'] + '__']
+                del self.sh.cfg.data['plugins']['__' + data['name'] + '__']
+            else:
+                self.sh.cfg.data['plugins'][data['name']] = {}
+        else:
+            self.sh.cfg.data['plugins']['__' + data['name'] + '__'] = self.sh.cfg.data['plugins'][data['name']]
+            del self.sh.cfg.data['plugins'][data['name']]
+        self.sh.cfg.save()
+
     def api(self, data_in):
         data = data_in['data']
         if data['cmd'] == 'get_hostname':
@@ -180,6 +203,11 @@ class plugin(plugins.base):
             return {}
         elif data['cmd'] == 'client_system_restart':
             self.sh.running = False
+            return {}
+        elif data['cmd'] == 'client_system_plugins':
+            return self._system_plugins()
+        elif data['cmd'] == 'client_system_plugin_change':
+            self._system_plugin_change(data)
             return {}
         return data_in['data']
 
