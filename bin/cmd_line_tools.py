@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import os
+import pwd
 
 SCRIPT = '''
 [Unit]
@@ -13,7 +14,7 @@ WorkingDirectory=path
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=pi
+User=user
 
 [Install]
 WantedBy=multi-user.target
@@ -25,7 +26,7 @@ def run(sh):
     args = parser.parse_args()
     if args.command == 'install':
         global SCRIPT
-        script = SCRIPT.replace('file', sh.basename).replace('path', sh.basepath)
+        script = SCRIPT.replace('file', sh.basename).replace('path', sh.basepath).replace('user', pwd.getpwuid(os.getuid())[0])
         f = open(sh.basepath + '/tmp/service', 'w+')
         f.write(script)
         f.close()
