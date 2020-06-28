@@ -41,6 +41,8 @@ class cfg:
         self.name = sh.const.path + '/etc/' + file
         if format == 'json':
             self.name += '.json'
+        else:
+            self.name += '.yaml'
         file_name = self.name
 
         ''' gegebenfalls versuch mit default '''
@@ -49,9 +51,15 @@ class cfg:
 
         ''' Laden der Datei '''
         try:
-            f = open(file_name, 'r+')
-            self.data = json.loads(f.read())
-            f.close()
+            if format == 'json':
+                f = open(file_name, 'r+')
+                self.data = json.loads(f.read())
+                f.close()
+            else:
+                f = open(file_name, 'r+')
+                self.data = yaml.safe_load(f)
+                f.close()
+
         except Exception as e:
             if hasattr(sh, 'log'):
                 sh.log.error(str(e))
@@ -66,11 +74,12 @@ class cfg:
         ''' Speichern der Datei, in einer gut lesbaren Variante '''
         if hasattr(self.sh, 'log'):
             self.sh.log.info('save')
-        f = open(self.name, 'w')
-        f.write(json.dumps(self.data, indent=2, sort_keys=True))
-        f.close()
         if self.format == 'json':
-            f = open(self.name[:-5]+'.yaml', 'w')
+            f = open(self.name, 'w')
+            f.write(json.dumps(self.data, indent=2, sort_keys=True))
+            f.close()
+        else:
+            f = open(self.name, 'w')
             yaml.dump(self.data, f, default_flow_style=False)
             f.close()
 
