@@ -196,12 +196,20 @@ class plugin(plugins.base):
             lenarray -= 1
         return '<br>'.join(out)
 
+    def _get_plugins(self):
+        out = {'plugins': [{'label':'System', 'name':'system'}]}
+        for name in self.sh.plugins.plugins:
+            cfg = config.load(self.sh, name + '/properties' , path='plugins')
+            if 'backend_web' in cfg.data:
+                out['plugins'].append({'label':cfg.data['friendly'], 'name':name})
+        return out
+
     def api(self, data_in):
         data = data_in['data']
         if data['cmd'] == 'get_hostname':
             return {'hostname': os.uname()[1]}
         elif data['cmd'] == 'client_get_plugins':
-            return {'plugins': [{'label':'System', 'name':'system'}]}
+            return self._get_plugins()
         elif data['cmd'] == 'client_get_state':
             return self._get_state()
         elif data['cmd'] == 'client_system_update':
@@ -223,4 +231,9 @@ class plugin(plugins.base):
             return {}
         elif data['cmd'] == 'client_system_logs':
             return {'log': self._system_plugin_logs()}
+        else:
+            name = data['cmd'].split('.')[1]
+            if name in self.sh.plugins.plugins:
+                plugin = self.sh.plugins.plugins[name]
+                return plugin.webserver_api(data)
         return data_in['data']
