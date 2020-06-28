@@ -47,6 +47,11 @@ class master():
             data = [in_data]
         elif isinstance(in_data, list):
             data = in_data
+        elif isinstance(in_data, dict):
+            data = []
+            for name in in_data:
+                if not(name.startswith('__')):
+                    data.append(name)
 
         ''' serielles laden '''
         for name in data:

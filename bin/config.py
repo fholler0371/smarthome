@@ -18,7 +18,7 @@ import yaml
 
 class cfg:
     ''' Klasse zum laden der Konfigurationen '''
-    def __init__(self, sh, file, format= 'yaml'):
+    def __init__(self, sh, file, path = 'etc', format= 'yaml'):
         ''' Init Proezdur
 
         Param:
@@ -36,9 +36,10 @@ class cfg:
         self.sh = sh
         self.data = {}
         self.format = format
+        self.path = path
 
         ''' Erstellen des vollständigen Namen des Files '''
-        self.name = sh.const.path + '/etc/' + file
+        self.name = sh.const.path + '/' + self.path + '/' + file
         if format == 'json':
             self.name += '.json'
         else:
@@ -83,7 +84,7 @@ class cfg:
             yaml.dump(self.data, f, default_flow_style=False)
             f.close()
 
-def load(sh, file, format= 'yaml'):
+def load(sh, file, path = 'etc', format= 'yaml'):
     ''' Kurz form zum erstellen der Klasse, Parameter werden direkt ueber-
     gebeben
 
@@ -93,4 +94,4 @@ def load(sh, file, format= 'yaml'):
     if hasattr(sh, 'log'):
         sh.log.info('load: '+file)
 
-    return cfg(sh, file, format)
+    return cfg(sh, file, path, format)

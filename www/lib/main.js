@@ -10,7 +10,11 @@ requirejs.config({
         jqxscrollbar: 'jqwidgets/jqxscrollbar',
         jqxdatatable: 'jqwidgets/jqxdatatable',
         jqxdata: 'jqwidgets/jqxdata',
-        jqxtabs: 'jqwidgets/jqxtabs'
+        jqxtabs: 'jqwidgets/jqxtabs',
+        jqxgrid: 'jqwidgets/jqxgrid',
+        jqxgrid_selection: 'jqwidgets/jqxgrid.selection',
+        jqxgrid_edit: 'jqwidgets/jqxgrid.edit',
+        jqxcheckbox: 'jqwidgets/jqxcheckbox'
     },
     shim:{
         jqxcore : {
@@ -18,6 +22,12 @@ requirejs.config({
           },
         jqxsplitter : {
             deps : ['jqxcore']
+          },
+        jqxgrid_selection : {
+            deps : ['jqxgrid']
+          },
+        jqxgrid_edit : {
+            deps : ['jqxgrid']
           },
         jqxtabs : {
             deps : ['jqxcore']

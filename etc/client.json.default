@@ -1,8 +1,0 @@
-{
-  "ip": "",
-  "logger": {
-    "dest": "console",
-    "level": "debug"
-  },
-  "port": 3050
-}

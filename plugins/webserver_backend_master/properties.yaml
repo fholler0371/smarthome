@@ -1,0 +1,3 @@
+background: False
+friendly: Master Backend Webserver
+description: Sollte auf einem von aussen zugerreichbaren System laufen, stellt die Verbindungen zu den Clients im Netzwerk her.
