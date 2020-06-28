@@ -16,35 +16,42 @@ define(['jquery', 'jqxdatatable', 'jqxtabs'], function($) {
           window.smcall({cmd:'client_system_update'}, function() {})
         } else if (id == 2) {
           window.smcall({cmd:'client_system_reboot'}, function() {})
+        } else if (id == 3) {
+          window.smcall({cmd:'client_system_restart'}, function() {})
+        } else if (id == 4) {
+          window.smcall({cmd:'client_system_install'}, function() {})
         } else {
           console.log($(event.currentTarget).attr('id'))
         }
       })
+      calltab0 = function() {
+        window.smcall({cmd:'client_get_state'}, function(data) {
+          html = '<table id="state_table"><thead><tr><th  align="left">Name</th><th align="left">Wert</th></tr></thead><tbody>'
+          html += '<tr><td>Typ</td><td>' + data.type + '</td></tr>'
+          html += '<tr><td>Hostname</td><td>' + data.hostname + '</td></tr>'
+          html += '<tr><td>IP-Adresse</td><td>' + data.ip + '</td></tr>'
+          html += '<tr><td>Arbeitsspeicher</td><td>' + data.mem + '</td></tr>'
+          html += '<tr><td>Frei</td><td>' + data.free + '</td></tr>'
+          html += '<tr><td>Festplatte</td><td>' + data.disk + '</td></tr>'
+          html += '<tr><td>Laufzeit</td><td>' + data.uptime + '</td></tr>'
+          html += '<tr><td>SmartHome Up</td><td>' + data.shtime + '</td></tr>'
+          html += '<tr><td>Temperature</td><td>' + data.temp + '</td></tr>'
+          $('#system_status').html(html + '</tbody></table>')
+          $('#state_table').jqxDataTable({
+            selectionMode: 'singleRow',
+            columns: [
+              { text: 'Parameter', dataField: 'Name', width: 250 },
+              { text: 'Wert', dataField: 'Wert', width: 300 }
+            ]
+          })
+          $('#state_table').css('margin', '10px')
+        })
+      }
       $('#system_tabs').on('selected', function (event) {
         var selectedTab = event.args.item
-        console.log(selectedTab)
+        calltab0()
       });
-      window.smcall({cmd:'client_get_state'}, function(data) {
-        html = '<table id="state_table"><thead><tr><th  align="left">Name</th><th align="left">Wert</th></tr></thead><tbody>'
-        html += '<tr><td>Typ</td><td>' + data.type + '</td></tr>'
-        html += '<tr><td>Hostname</td><td>' + data.hostname + '</td></tr>'
-        html += '<tr><td>IP-Adresse</td><td>' + data.ip + '</td></tr>'
-        html += '<tr><td>Arbeitsspeicher</td><td>' + data.mem + '</td></tr>'
-        html += '<tr><td>Frei</td><td>' + data.free + '</td></tr>'
-        html += '<tr><td>Festplatte</td><td>' + data.disk + '</td></tr>'
-        html += '<tr><td>Laufzeit</td><td>' + data.uptime + '</td></tr>'
-        html += '<tr><td>SmartHome Up</td><td>' + data.shtime + '</td></tr>'
-        html += '<tr><td>Temperature</td><td>' + data.temp + '</td></tr>'
-        $('#system_status').html(html + '</tbody></table>')
-        $('#state_table').jqxDataTable({
-          selectionMode: 'singleRow',
-          columns: [
-            { text: 'Parameter', dataField: 'Name', width: 250 },
-            { text: 'Wert', dataField: 'Wert', width: 300 }
-          ]
-        })
-        $('#state_table').css('margin', '10px')
-      })
+      calltab0()
     }
   }
 })

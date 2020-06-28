@@ -50,6 +50,22 @@ class systemRebootThread(Thread):
         self.log.info('System Reboot')
         responce = subprocess.Popen(('sudo reboot').split(' '), stdout=subprocess.PIPE).stdout.read()
 
+class systemInstallThread(Thread):
+    def __init__(self, log, sh):
+        Thread.__init__(self)
+        self.log = log
+        self.sh = sh
+
+    def run(self):
+        self.log.info('System Install')
+        name = self.sh.basepath + '/tmp/install_it.sh'
+        f = open(name, 'w')
+        f.write('wget -q -O - https://raw.githubusercontent.com/fholler0371/smarthome/master/install.sh | bash')
+        f.close()
+        response = subprocess.Popen(('bash ' + name).split(' '), stdout=subprocess.PIPE).stdout.read()
+        out = response.decode(errors= 'backslashreplace')
+        os.remove(name)
+
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
     def __init__(self, sh, name):
@@ -136,12 +152,14 @@ class plugin(plugins.base):
     def _system_update(self):
         th = systemUpgradeThread(self.sh.log)
         th.start()
-        print('update')
 
     def _system_reboot(self):
         th = systemRebootThread(self.sh.log)
         th.start()
-        print('update')
+
+    def _system_install(self):
+        th = systemInstallThread(self.sh.log, self.sh)
+        th.start()
 
     def api(self, data_in):
         data = data_in['data']
@@ -156,6 +174,12 @@ class plugin(plugins.base):
             return {}
         elif data['cmd'] == 'client_system_reboot':
             self._system_reboot()
+            return {}
+        elif data['cmd'] == 'client_system_install':
+            self._system_install()
+            return {}
+        elif data['cmd'] == 'client_system_restart':
+            self.sh.running = False
             return {}
         return data_in['data']
 

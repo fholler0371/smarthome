@@ -63,3 +63,5 @@ sudo chmod +x $file
 $file install
 $file restart
 
+cd $basepath
+bash get_js.sh
