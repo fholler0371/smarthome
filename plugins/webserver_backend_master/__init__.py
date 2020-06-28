@@ -18,7 +18,36 @@ Verlauf:
     2020-06-24 Basis erstellt
 """
 
+from threading import Thread
+import json
+import urllib.request
+
 import plugins
+import bin.ping as ping
+
+class scanThread(Thread):
+    def __init__(self, log, net, pl, client_port):
+        Thread.__init__(self)
+        self.net = net
+        self.pl = pl
+        self.log = log
+        self.client_port = client_port
+
+    def run(self):
+        ping_hosts = ping.scan(self.log, self.net)
+        data = json.dumps({'cmd':'get_hostname'}).encode()
+        hosts = []
+        for host in ping_hosts:
+            try:
+                with urllib.request.urlopen('http://' + host + ':' + str(self.client_port) + '/api', data) as f:
+                    hosts.append({'ip': host, 'hostname': json.loads(f.read().decode())['hostname']})
+            except:
+                pass
+        self.pl.cfg['hosts'] = hosts
+        self.pl.sh.cfg.data['plugins'][self.pl.name]['hosts'] = hosts
+        self.pl.sh.cfg.save()
+        self.pl.scanning = False
+
 
 class plugin(plugins.base):
     ''' Klasse des Plugins mit den Standard Parametern '''
@@ -29,11 +58,14 @@ class plugin(plugins.base):
         ''' Prüfen der Konfig und sezen ggf. der defaults'''
         val = {
             'port' : 4000,
+            'client_port' : 4050,
             'path' : 'www/backend/master',
-            'lib' : 'www/lib'
+            'lib' : 'www/lib',
+            'hosts': []
           }
         if not self.sh.const.is_service:
             val['port'] = val['port'] + 100
+            val['client_port'] = val['client_port'] + 100
         self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
@@ -46,37 +78,47 @@ class plugin(plugins.base):
 
         ''' setzen der defaults '''
         self.server = None
-
-    def _create_config(self):
-        self.sh.log.info('_create_config')
-        change = False
-        if not self.name in self.sh.cfg.data['plugins']:
-            self.sh.cfg.data['plugins'][self.name] = {}
-            change = True
-        if not 'port' in self.sh.cfg.data['plugins'][self.name]:
-            self.sh.cfg.data['plugins'][self.name]['port'] = 4000
-            if not self.sh.const.is_service:
-                self.sh.cfg.data['plugins'][self.name]['port'] += 100
-            change = True
-        if not 'path' in self.sh.cfg.data['plugins'][self.name]:
-            if not self.sh.const.is_service:
-                self.sh.cfg.data['plugins'][self.name]['path'] = 'www/backend/master'
-            change = True
-        if not 'lib' in self.sh.cfg.data['plugins'][self.name]:
-            if not self.sh.const.is_service:
-                self.sh.cfg.data['plugins'][self.name]['lib'] = 'www/lib'
-            change = True
-        if change:
-             self.sh.cfg.save()
-        self.cfg = self.sh.cfg.data['plugins'][self.name]
+        self.scanning = False
 
     def run(self):
         ''' starten des Plugins '''
         self.sh.log.info('run')
         if self.loaded:
-            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'])
+            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api)
 
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
         if self.server:
             self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])
+
+    def _scan_hosts(self):
+        if not('network' in self.cfg):
+            net = ping.guess_network()
+            if net != '':
+                self.cfg['network'] = net
+                self.sh.cfg.data['plugins'][self.name]['network'] = net
+                self.sh.cfg.save()
+        if 'network' in self.cfg:
+            th = scanThread(self.sh.log, self.cfg['network'], self, self.cfg['client_port'])
+            th.start()
+            self.scanning = True
+
+    def getClientAPI(self, data):
+        jdata = json.dumps(data).encode()
+        out = {}
+        with urllib.request.urlopen('http://' + data['client'] + ':' + str(self.cfg['client_port']) + '/api', jdata) as f:
+            out = json.loads(f.read().decode())
+        return out
+
+    def api(self, data_in):
+        data = data_in['data']
+        if data['cmd'] == 'scan_clients':
+            self._scan_hosts()
+            return {'scan_state': self.scanning}
+        elif data['cmd'] == 'get_scan_state':
+            return {'scan_state': self.scanning}
+        elif data['cmd'] == 'get_remote_hosts':
+            return {'hosts': self.cfg['hosts']}
+        elif data['cmd'].startswith('client'):
+            return self.getClientAPI(data)
+        return data_in['data']

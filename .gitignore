@@ -1,0 +1,8 @@
+www/lib/jqwidgets/*
+www/lib/jquery/*
+www/lib/requirejs/*
+__pycache__/
+etc/*.json
+db/*.sqlite
+log/*.log
+tmp/*
