@@ -56,7 +56,7 @@ def scan(log, range):
 def guess_network():
     net = []
     for interface in netifaces.interfaces():
-        if 'broadcast' in netifaces.ifaddresses(interface)[netifaces.AF_INET][0]:
+        if netifaces.AF_INET in netifaces.ifaddresses(interface) and 'broadcast' in netifaces.ifaddresses(interface)[netifaces.AF_INET][0]:
             net.append(interface)
     gw = netifaces.gateways()['default'][netifaces.AF_INET][1]
     interface = None
