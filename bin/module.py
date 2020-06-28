@@ -7,6 +7,8 @@ def scan(cls):
     folder =  cls.basepath + '/module'
     files = tools.find_files(folder, '*.py')
     change = False
+    if not ('module' in  cls.cfg.data):
+        cls.cfg.data['module'] = {}
     for file in files:
         name = file.split('/')[-1][:-3]
         if not name.startswith('__'):
