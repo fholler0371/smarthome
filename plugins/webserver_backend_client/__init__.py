@@ -19,6 +19,7 @@ Verlauf:
 """
 
 import os
+import sys
 import time
 import plugins
 from threading import Thread
@@ -151,6 +152,9 @@ class plugin(plugins.base):
             out['shtime'] = str(value) + 'd ' + out['shtime']
         response = subprocess.Popen(('uname -r').split(' '), stdout=subprocess.PIPE).stdout.read()
         out['kernalversion'] = response.decode(errors= 'backslashreplace').split('\n')[0]
+        response = subprocess.Popen(('cat /etc/os-release').split(' '), stdout=subprocess.PIPE).stdout.read()
+        out['osname'] = response.decode(errors= 'backslashreplace').split('"')[1]
+        out['python'] = sys.version.split(' ')[0]
         return out
 
     def _system_update(self):

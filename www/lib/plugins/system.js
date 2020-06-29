@@ -38,6 +38,8 @@ define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_sele
           html += '<tr><td>SmartHome Up</td><td>' + data.shtime + '</td></tr>'
           html += '<tr><td>Temperature</td><td>' + data.temp + '</td></tr>'
           html += '<tr><td>Kernal-Version</td><td>' + data.kernalversion + '</td></tr>'
+          html += '<tr><td>OS-Name</td><td>' + data.osname + '</td></tr>'
+          html += '<tr><td>Python Version</td><td>' + data.python + '</td></tr>'
           $('#system_status').html(html + '</tbody></table>')
           $('#state_table').jqxDataTable({
             selectionMode: 'singleRow',
