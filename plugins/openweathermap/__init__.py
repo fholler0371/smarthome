@@ -14,6 +14,20 @@ class plugin(plugins.base):
           }
         self.create_config(val)
 
+        self.timer = None
+
+    def run(self):
+        self.timer = self.lib['timer'].start(self.cfg['intervall'], self.job)
+
+    def job(self):
+        if self.cfg['api'] != "":
+            print(self.cfg['api'])
+
+    def stop(self):
+        if self.timer:
+            self.timer.stop()
+
+
     def _set_config(self, data):
         self.cfg['api'] = data['api']
         self.cfg['intervall'] = data['intervall']
