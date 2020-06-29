@@ -1,7 +1,7 @@
 define(['jquery'], function($) {
   return {
     start : function() {
-      html = '<div id="topleft" class="leftMenu mainHeader primColor"></div>'
+      html = '<div id="topleft" class="leftMenu mainHeader primColor"><span>Smart Live</span><input type="button" id="menuSmall" /></div>'
       html += '<div id="topright" class="rightPart mainHeader primColor"><input style="margin: 10px;" type="button" id="loginButton" /></div>'
       html += '<div id="leftmenu" class="leftMenu mainArea primColor"></div>'
       $('body').html(html + '<div id="content" class="rightPart mainArea"></div>')
@@ -9,6 +9,14 @@ define(['jquery'], function($) {
         $("#loginButton").jqxButton({ width: 40, height: 40, imgSrc: "/lib/img/login-36-white.png", imgHeight: 36, imgWidth: 36})
         $("#loginButton").css("float", 'right')
         $("#loginButton > img").css("top", '1px').css("left", '1px')
+        $("#menuSmall").jqxButton({ width: 28, height: 28, imgSrc: "/lib/img/left-24-white.png", imgHeight: 24, imgWidth: 24})
+        $("#menuSmall").css("float", 'right').css('top', '20px')
+        $("#menuSmall > img").css("top", '1px').css("left", '1px')
+        $("#menuSmall").on('click', function() {
+          $('#topright, #topleft').addClass('small')
+          $("#menuSmall").hide()
+          console.log('make small')
+        })
       })
 /*      requirejs(['/lib/client.js'], function(mod) {
         window.client = mod.start

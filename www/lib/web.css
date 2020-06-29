@@ -3,12 +3,21 @@
 }
 
 .mainHeader {
-  height: 60px
+  height: 60px;
+  color: #b0bec5;
+  font-size: 36px;
+  font-family: 'Fredoka One', cursive
 }
 
 .leftMenu {
   width: 250px;
   float: left
+}
+
+.mainHeader.leftMenu > span {
+  left: 31px;
+  position: relative;
+  top: 9px;
 }
 
 .rightPart {
@@ -18,4 +27,14 @@
 
 .mainArea {
   height: calc(100% - 60px)
+}
+
+.mainHeader.rightPart.small {
+  width: calc(100% - 60px);
+}
+.leftMenu.mainHeader.small {
+  width: 60px
+}
+.leftMenu.mainHeader.small > span {
+  display: none
 }
