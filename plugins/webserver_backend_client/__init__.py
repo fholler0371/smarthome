@@ -149,6 +149,8 @@ class plugin(plugins.base):
         value = int(value/24)
         if value > 0:
             out['shtime'] = str(value) + 'd ' + out['shtime']
+        response = subprocess.Popen(('uname -r').split(' '), stdout=subprocess.PIPE).stdout.read()
+        out['kernalversion'] = response.decode(errors= 'backslashreplace').split('\n')[0]
         return out
 
     def _system_update(self):
