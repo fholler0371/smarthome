@@ -1,0 +1,4 @@
+background: False
+friendly: Openweathermap
+description: Holt aktuelles Wetter und Wettervorhersagen von Openweathermap
+backend_web: True

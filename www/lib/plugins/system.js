@@ -37,6 +37,7 @@ define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_sele
           html += '<tr><td>Laufzeit</td><td>' + data.uptime + '</td></tr>'
           html += '<tr><td>SmartHome Up</td><td>' + data.shtime + '</td></tr>'
           html += '<tr><td>Temperature</td><td>' + data.temp + '</td></tr>'
+          html += '<tr><td>Kernal-Version</td><td>' + data.kernalversion + '</td></tr>'
           $('#system_status').html(html + '</tbody></table>')
           $('#state_table').jqxDataTable({
             selectionMode: 'singleRow',

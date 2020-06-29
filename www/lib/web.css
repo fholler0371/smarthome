@@ -1,0 +1,21 @@
+.primColor {
+  background-color: #0288d1
+}
+
+.mainHeader {
+  height: 60px
+}
+
+.leftMenu {
+  width: 250px;
+  float: left
+}
+
+.rightPart {
+  width: calc(100% - 250px);
+  float: right
+}
+
+.mainArea {
+  height: calc(100% - 60px)
+}

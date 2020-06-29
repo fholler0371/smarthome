@@ -15,7 +15,9 @@ requirejs.config({
         jqxgrid_selection: 'jqwidgets/jqxgrid.selection',
         jqxgrid_edit: 'jqwidgets/jqxgrid.edit',
         jqxcheckbox: 'jqwidgets/jqxcheckbox',
-        jqxpanel: 'jqwidgets/jqxpanel'
+        jqxpanel: 'jqwidgets/jqxpanel',
+        jqxinput: 'jqwidgets/jqxinput',
+        jqxnumberinput: 'jqwidgets/jqxnumberinput'
     },
     shim:{
         jqxcore : {
@@ -74,5 +76,6 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
     })
   }
   $.jqx.theme = 'metrodark';
+//  $.jqx.theme = 'custom-scheme';
   mod.start()
 })

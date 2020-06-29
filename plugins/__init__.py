@@ -171,3 +171,6 @@ class base():
     def stop(self):
         ''' Dummy Pass'''
         pass
+
+    def webserver_api(self, data):
+        return data
