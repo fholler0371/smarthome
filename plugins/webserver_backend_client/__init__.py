@@ -128,7 +128,6 @@ class plugin(plugins.base):
         response = subprocess.Popen(('cat /sys/class/thermal/thermal_zone0/temp').split(' '), stdout=subprocess.PIPE).stdout.read()
         out['temp'] = ("{:.1f}".format(int(response.decode())/1000)).replace('.', ',')+' C'
         out['hostname'] = os.uname()[1]
-        out['ip'] = ping.guess_network().split('/')[0]
         value = psutil.disk_usage(self.sh.const.path)
         out['disk'] = ("{:.2f}".format(value.free/1024/1024/1024)).replace('.', ',') + ' GiB '
         out['disk'] += ("{:.1f}".format(100-value.percent)).replace('.', ',') + '%'
@@ -155,6 +154,9 @@ class plugin(plugins.base):
         response = subprocess.Popen(('cat /etc/os-release').split(' '), stdout=subprocess.PIPE).stdout.read()
         out['osname'] = response.decode(errors= 'backslashreplace').split('"')[1]
         out['python'] = sys.version.split(' ')[0]
+        out['serial'] = self.sh.const.serial
+        out['version'] = self.sh.const.version
+        out['ip'] = self.sh.const.ip.split('/')[0]
         return out
 
     def _system_update(self):

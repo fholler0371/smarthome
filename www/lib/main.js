@@ -75,7 +75,7 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
       this(data)
     })
   }
-//  $.jqx.theme = 'metrodark';
-  $.jqx.theme = 'custom-scheme';
+  $.jqx.theme = 'metrodark';
+//  $.jqx.theme = 'custom-scheme';
   mod.start()
 })
