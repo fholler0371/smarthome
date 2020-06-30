@@ -1,8 +1,9 @@
-define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit', 'jqxpanel'],
+define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit', 'jqxpanel'],
     function($) {
   return {
     func : function() {
-      html = '<div id="system_tabs"><ul><li>Status</li><li>Wartung</li><li>Plugins</li><li>Log</li></ul><div id="system_status"></div>'
+      html = '<div id="system_tabs"><ul><li>Status</li><li>Konfiguration</li><li>Wartung</li><li>Plugins</li><li>Log</li></ul>'
+      html += '<div id="system_status"></div><div id="system_config"></div>'
       html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div><div><div id="system_log"></div></div></div>'
       $('#client_right').html(html)
       $('#system_tabs').jqxTabs({ width: '100%', height: '100%', position: 'top'})
@@ -11,6 +12,16 @@ define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_sele
       $('#sytem_tool').append('<input type="button" value="Restart" id="3" />')
       $('#sytem_tool').append('<input type="button" value="Neu Installtion" id="4" />')
       $('#sytem_tool > input').jqxButton({width: 250, height: 40}).css('margin', '10px')
+      html = '<table><tr><td><b>Latitude:</b></td><td><input type="text" id="system_lat"/>'
+      html += '</td></tr><tr><td><b>Longitude:</b></td><td><input type="text" id="system_long"/></td></tr>'
+      html += '<tr><td style="height:40px;"> </td</tr><tr><td></td><td>'
+      $('#system_config').html(html + '<input type="button" value="Senden" id="system_send" /></td></tr></table>')
+      $("#system_lat").jqxInput({placeHolder: "Latitude", height: 40, width: 250});
+      $("#system_long").jqxInput({placeHolder: "Longitude", height: 40, width: 250});
+      $('#system_send').jqxButton({width: 250, height: 40}).css('margin', '10px')
+      $('#system_send').on('click', function() {
+        window.smcall({cmd:'client_system_set_var', 'geo': {'lat': $('#system_lat').val(), 'long': $('#system_long').val()}}, function() {})
+      })
       $('#sytem_tool > input').on('click', function(event) {
         var id = $(event.currentTarget).attr('id')
         if (id == 1) {
@@ -105,9 +116,9 @@ define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_sele
         var selectedTab = event.args.item
         if (selectedTab == 0) {
           calltab0()
-        } else if (selectedTab == 2) {
-          calltab2()
         } else if (selectedTab == 3) {
+          calltab2()
+        } else if (selectedTab == 4) {
           calltab3()
         } else {
           console.log(selectedTab)
@@ -117,6 +128,10 @@ define(['jquery', 'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_sele
       $("#system_log").jqxPanel({ width: '100%', height: '100%'});
       $("#system_log").parent().css('overflow', 'hidden')
       calltab0()
+      window.smcall({cmd:'client_system_get_var'}, function(data) {
+        $('#system_lat').val(data.lat)
+        $('#system_long').val(data.long)
+      })
     }
   }
 })

@@ -20,8 +20,9 @@ class plugin(plugins.base):
         self.timer = self.lib['timer'].start(self.cfg['intervall'], self.job)
 
     def job(self):
-        if self.cfg['api'] != "":
+        if self.cfg['api'] != "" and hasattr(self.sh.const, 'geo'):
             print(self.cfg['api'])
+            print(self.sh.const.geo)
 
     def stop(self):
         if self.timer:

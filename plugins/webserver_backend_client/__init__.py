@@ -212,6 +212,17 @@ class plugin(plugins.base):
                 out['plugins'].append({'label':cfg.data['friendly'], 'name':name})
         return out
 
+    def _system_get_var(self):
+        if hasattr(self.sh.const, 'geo'):
+            return self.sh.const['geo']
+        else:
+            return {'lat': 52.5092947, 'long': 13.4178536}
+
+    def _system_set_var(self, data):
+        self.sh.const.geo = data['geo']
+        self.sh.cfg.data['geo'] = data['geo']
+        self.sh.cfg.save()
+
     def api(self, data_in):
         data = data_in['data']
         if data['cmd'] == 'get_hostname':
@@ -239,6 +250,10 @@ class plugin(plugins.base):
             return {}
         elif data['cmd'] == 'client_system_logs':
             return {'log': self._system_plugin_logs()}
+        elif data['cmd'] == 'client_system_get_var':
+            return self._system_get_var()
+        elif data['cmd'] == 'client_system_set_var':
+            return self._system_set_var(data)
         else:
             name = data['cmd'].split('.')[1]
             if name in self.sh.plugins.plugins:

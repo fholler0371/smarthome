@@ -66,6 +66,9 @@ class smarthome:
         cfg_file = self.const.name if self.const.is_service else self.const.name + '.cmd'
         self.cfg = config.load(self, cfg_file)
 
+        if 'geo' in self.cfg.data:
+            self.const.geo = self.cfg.data['geo']
+
         ''' Intialiesierung des Loggers '''
         self.log = logging.getLogger(self.basename)
 
