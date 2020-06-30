@@ -1,3 +1,5 @@
+import requests
+
 import plugins
 
 class plugin(plugins.base):
@@ -21,8 +23,15 @@ class plugin(plugins.base):
 
     def job(self):
         if self.cfg['api'] != "" and hasattr(self.sh.const, 'geo'):
-            print(self.cfg['api'])
-            print(self.sh.const.geo)
+            url = "https://api.openweathermap.org/data/2.5/onecall?units=metric&lang=de&"
+            url += 'lat='+str(self.sh.const.geo['lat'])+'&lon='+str(self.sh.const.geo['long'])+'&exclude=minutely&apikey='+self.cfg['api']
+            try:
+                r = requests.get(url)
+                if r.status_code == 200:
+                    print(r.content)
+            except Exeception as e:
+                self.sh.log.error(str(e))
+                print(str(e))
 
     def stop(self):
         if self.timer:
