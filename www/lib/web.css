@@ -1,40 +1,37 @@
-.primColor {
-  background-color: #0288d1
+#mainTop {
+  display: block;
+  height: 3.7rem;
+  background-color: #0288d1;
+  color: #b0bec5
 }
-
-.mainHeader {
-  height: 60px;
-  color: #b0bec5;
-  font-size: 36px;
-  font-family: 'Fredoka One', cursive
-}
-
 .leftMenu {
-  width: 250px;
-  float: left
+  width: 16rem;
 }
-
-.mainHeader.leftMenu > span {
-  left: 31px;
+.leftMenuSmall > .leftMenu {
+  width: 4.75rem;
+}
+#slogan {
+  font-size: 2.25rem;
   position: relative;
-  top: 9px;
+  top: 0.31rem;
+  left: 3.5rem
+}
+#menuSmall {
+  float: right;
+  position: relative;
+  top: 0.875rem
+}
+#loginButton {
+  top: 0.625rem;
+  right: 0.625rem;
+}
+#burgerMenu {
+  top: 0.4375rem;
+  left: 0.625rem;
 }
 
-.rightPart {
-  width: calc(100% - 250px);
-  float: right
-}
 
-.mainArea {
-  height: calc(100% - 60px)
-}
 
-.mainHeader.rightPart.small {
-  width: calc(100% - 60px);
-}
-.leftMenu.mainHeader.small {
-  width: 60px
-}
-.leftMenu.mainHeader.small > span {
-  display: none
-}
+
+
+
