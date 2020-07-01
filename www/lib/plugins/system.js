@@ -1,4 +1,5 @@
-define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit', 'jqxpanel'],
+define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox',
+    'jqxgrid_edit', 'jqxpanel'],
     function($) {
   return {
     func : function() {
@@ -12,15 +13,18 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $('#sytem_tool').append('<input type="button" value="Restart" id="3" />')
       $('#sytem_tool').append('<input type="button" value="Neu Installtion" id="4" />')
       $('#sytem_tool > input').jqxButton({width: 250, height: 40}).css('margin', '10px')
-      html = '<table><tr><td><b>Latitude:</b></td><td><input type="text" id="system_lat"/>'
+      html = '<table><tr><td><b>Masterserver:</b></td><td><div id="system_master"></td></tr>'
+      html += '<tr><td><b>Latitude:</b></td><td><input type="text" id="system_lat"/>'
       html += '</td></tr><tr><td><b>Longitude:</b></td><td><input type="text" id="system_long"/></td></tr>'
       html += '<tr><td style="height:40px;"> </td</tr><tr><td></td><td>'
       $('#system_config').html(html + '<input type="button" value="Senden" id="system_send" /></td></tr></table>')
       $("#system_lat").jqxInput({placeHolder: "Latitude", height: 40, width: 250});
       $("#system_long").jqxInput({placeHolder: "Longitude", height: 40, width: 250});
       $('#system_send').jqxButton({width: 250, height: 40}).css('margin', '10px')
+      $("#system_master").jqxCheckBox({ width: 120, height: 25});
       $('#system_send').on('click', function() {
-        window.smcall({cmd:'client_system_set_var', 'geo': {'lat': $('#system_lat').val(), 'long': $('#system_long').val()}}, function() {})
+        window.smcall({cmd:'client_system_set_var', 'master': $("#system_master").jqxCheckBox('val'),
+            'geo': {'lat': $('#system_lat').val(), 'long': $('#system_long').val()}}, function() {})
       })
       $('#sytem_tool > input').on('click', function(event) {
         var id = $(event.currentTarget).attr('id')
@@ -129,8 +133,9 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $("#system_log").parent().css('overflow', 'hidden')
       calltab0()
       window.smcall({cmd:'client_system_get_var'}, function(data) {
-        $('#system_lat').val(data.lat)
-        $('#system_long').val(data.long)
+        $("#system_master").jqxCheckBox('val', data.master)
+        $('#system_lat').val(data.geo.lat)
+        $('#system_long').val(data.geo.long)
       })
     }
   }

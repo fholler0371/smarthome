@@ -213,14 +213,18 @@ class plugin(plugins.base):
         return out
 
     def _system_get_var(self):
+        out = {'master': False, 'geo': {'lat': 52.5092947, 'long': 13.4178536}}
         if hasattr(self.sh.const, 'geo'):
-            return self.sh.const['geo']
-        else:
-            return {'lat': 52.5092947, 'long': 13.4178536}
+            out['geo'] = self.sh.const.geo
+        if hasattr(self.sh.const, 'master'):
+            out['master'] = self.sh.const.master
+        return out
 
     def _system_set_var(self, data):
         self.sh.const.geo = data['geo']
         self.sh.cfg.data['geo'] = data['geo']
+        self.sh.const.master = data['master']
+        self.sh.cfg.data['master'] = data['master']
         self.sh.cfg.save()
 
     def api(self, data_in):

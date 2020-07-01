@@ -51,3 +51,4 @@ class basic():
         self.version = data['version']
 
         self.ip = ping.guess_network()
+        self.master = False
