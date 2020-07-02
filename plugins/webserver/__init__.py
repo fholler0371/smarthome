@@ -85,7 +85,7 @@ class webserverHandler(BaseHTTPRequestHandler):
             path = self.sh.const.path + '/' + self.root_path + '/' + path[1:]
 
         ''' Blockieren des Hochwanderns in der Verzeichnisstruktur'''
-        path = path.replace('/./', '/').replace('/../', '/').replace('//', '/')
+        path = path.replace('/./', '/').replace('/../', '/').replace('//', '/').replace('/.', '/')
 
         ''' senden der Dateien '''
         if not os.path.exists(path):

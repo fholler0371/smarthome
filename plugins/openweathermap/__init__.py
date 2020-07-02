@@ -1,4 +1,5 @@
 import requests
+import json
 
 import plugins
 
@@ -28,7 +29,18 @@ class plugin(plugins.base):
             try:
                 r = requests.get(url)
                 if r.status_code == 200:
-                    print(r.content)
+                    data = json.loads(r.content.decode())
+                    for element in data['current']:
+                        if element != 'dt' and element != 'weather' and element != 'rain':
+                             print(data['current']['dt'], element, data['current'][element])
+                    for element in data['current']['weather'][0]:
+                        print(data['current']['dt'], 'weather_'+element, data['current']['weather'][0][element])
+                    for element in data['current']['rain']:
+                        print(data['current']['dt'], 'rain_'+element, data['current']['weather'][element])
+                    lenarr = len(data['daily'])
+                    for daily in data['daily']:
+                        for element in daily:
+                            print(element)
             except Exeception as e:
                 self.sh.log.error(str(e))
                 print(str(e))
