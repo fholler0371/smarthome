@@ -229,6 +229,11 @@ class plugin(plugins.base):
 
     def api(self, data_in):
         data = data_in['data']
+        print(data)
+        if 'client' in data:
+            if 'master' == data['client']:
+                if 'get_server' == data['cmd']:
+                    return {'name': self.sh.const.server_name, 'master': self.sh.const.master}
         if data['cmd'] == 'get_hostname':
             return {'hostname': os.uname()[1]}
         elif data['cmd'] == 'client_get_plugins':

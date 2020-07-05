@@ -52,3 +52,5 @@ class basic():
 
         self.ip = ping.guess_network()
         self.master = False
+
+        self.server_name = os.uname()[1]

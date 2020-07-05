@@ -29,8 +29,19 @@
   top: 0.4375rem;
   left: 0.625rem;
 }
-
-
+#host_name {
+  position: absolute;
+  font-size: 2.25rem;
+  left: 20rem;
+  top: 0.31rem;
+}
+.leftMenuSmall > #host_name {
+  left: 7rem;
+}
+#client_area {
+   width: 100%;
+   min-height: calc( 100% - 3.7rem ); 
+}
 
 
 
