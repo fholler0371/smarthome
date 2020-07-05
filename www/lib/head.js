@@ -22,7 +22,9 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
           var element = event.args;
           var cmd = $(element).data('cmd')
           if (cmd == 'sm_scan') {
-            console.log('scan')
+            window.smcall({'client': 'master', 'cmd':'server_scan'}, function(data) {
+              console.log(data)
+            })
           } else {
             console.log(cmd)
           }

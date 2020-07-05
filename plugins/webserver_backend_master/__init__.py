@@ -69,7 +69,7 @@ class plugin(plugins.base):
         self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
-        self.require = ['webserver']
+        self.require = ['webserver', 'net_broadcast']
         self.get_requirements()
 
         ''' wenn alles Ok Plugin registrieren '''
@@ -119,8 +119,12 @@ class plugin(plugins.base):
                     return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
                 elif 'get_clients' == data['cmd']:
                     return  self.cfg['hosts']
+                elif 'server_scan' == data['cmd']:
+                    self.lib['net_broadcast'].scan()
+                    return  self.cfg['hosts']
         if data['cmd'] == 'scan_clients':
-            self._scan_hosts()
+#            self._scan_hosts()
+            self.lib['net_broadcast'].scan()
             return {'scan_state': self.scanning}
         elif data['cmd'] == 'get_scan_state':
             return {'scan_state': self.scanning}
