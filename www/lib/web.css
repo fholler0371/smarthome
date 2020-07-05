@@ -1,8 +1,11 @@
 #mainTop {
-  display: block;
   height: 3.7rem;
+  width: 100%;
   background-color: #0288d1;
-  color: #b0bec5
+  color: #b0bec5;
+  position: fixed;
+  top: 0;
+  left: 0
 }
 .leftMenu {
   width: 16rem;
@@ -39,8 +42,10 @@
   left: 7rem;
 }
 #client_area {
+   position: fixed;
+   top: 3.7rem;
    width: 100%;
-   min-height: calc( 100% - 3.7rem ); 
+   min-height: calc( 100% - 3.7rem );
 }
 
 

@@ -54,3 +54,4 @@ class basic():
         self.master = False
 
         self.server_name = os.uname()[1]
+        self.friendly_name = os.uname()[1]

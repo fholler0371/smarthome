@@ -216,8 +216,8 @@ class plugin(plugins.base):
         out = {'master': False, 'geo': {'lat': 52.5092947, 'long': 13.4178536}}
         if hasattr(self.sh.const, 'geo'):
             out['geo'] = self.sh.const.geo
-        if hasattr(self.sh.const, 'master'):
             out['master'] = self.sh.const.master
+            out['friendly_name'] = self.sh.const.friendly_name
         return out
 
     def _system_set_var(self, data):
@@ -225,6 +225,8 @@ class plugin(plugins.base):
         self.sh.cfg.data['geo'] = data['geo']
         self.sh.const.master = data['master']
         self.sh.cfg.data['master'] = data['master']
+        self.sh.const.friendly_name = data['friendly_name']
+        self.sh.cfg.data['friendly_name'] = data['friendly_name']
         self.sh.cfg.save()
 
     def api(self, data_in):
@@ -233,7 +235,7 @@ class plugin(plugins.base):
         if 'client' in data:
             if 'master' == data['client']:
                 if 'get_server' == data['cmd']:
-                    return {'name': self.sh.const.server_name, 'master': self.sh.const.master}
+                    return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
         if data['cmd'] == 'get_hostname':
             return {'hostname': os.uname()[1]}
         elif data['cmd'] == 'client_get_plugins':

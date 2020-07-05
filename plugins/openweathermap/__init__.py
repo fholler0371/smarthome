@@ -42,11 +42,12 @@ class plugin(plugins.base):
                         if not (name in self.sensors):
                             self.sensors[name] = sensor_base.sensor()
                         self.sensors[name].val(name, data['current']['weather'][0][element], data['current']['dt'])
-                    for element in data['current']['rain']:
-                        name = 'rain_'+element
-                        if not (name in self.sensors):
-                            self.sensors[name] = sensor_base.sensor()
-                        self.sensors[name].val(name, data['current']['rain'][element], data['current']['dt'])
+                    if 'rain' in data['current']:
+                        for element in data['current']['rain']:
+                            name = 'rain_'+element
+                            if not (name in self.sensors):
+                                self.sensors[name] = sensor_base.sensor()
+                            self.sensors[name].val(name, data['current']['rain'][element], data['current']['dt'])
                     lenarr = len(data['daily'])
                     l = 0
                     while l < lenarr:

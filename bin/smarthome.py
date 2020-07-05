@@ -70,6 +70,8 @@ class smarthome:
             self.const.geo = self.cfg.data['geo']
         if 'master' in self.cfg.data:
             self.const.master = self.cfg.data['master']
+        if 'friendly_name' in self.cfg.data:
+            self.const.friendly_name = self.cfg.data['friendly_name']
 
         ''' Intialiesierung des Loggers '''
         self.log = logging.getLogger(self.basename)

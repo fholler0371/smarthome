@@ -23,7 +23,8 @@ define(['jquery', 'jqxbutton'], function($) {
         $("#menuSmall > img").css({'top': 1, 'left': 1})
       })
       window.smcall({'client': 'master', 'cmd':'get_server'}, function(data) {
-        $("#host_name").html("Server: " + data.name)
+        $("#host_name").html("Server: " + data.friendly_name)
+        $("#host_name").data('data', data)
         console.log(data)
       })
       console.log('xXx')
