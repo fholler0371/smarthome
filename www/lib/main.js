@@ -17,7 +17,8 @@ requirejs.config({
         jqxcheckbox: 'jqwidgets/jqxcheckbox',
         jqxpanel: 'jqwidgets/jqxpanel',
         jqxinput: 'jqwidgets/jqxinput',
-        jqxnumberinput: 'jqwidgets/jqxnumberinput'
+        jqxnumberinput: 'jqwidgets/jqxnumberinput',
+        jqxmenu: 'jqwidgets/jqxmenu'
     },
     shim:{
         jqxcore : {

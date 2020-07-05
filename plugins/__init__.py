@@ -116,6 +116,7 @@ class base():
         '''
         self.sh = sh
         self.name = name
+        self.friendly_name = name
         self.require = []
         self.cfg = {}
         self.lib = {}

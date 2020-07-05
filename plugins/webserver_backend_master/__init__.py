@@ -112,6 +112,13 @@ class plugin(plugins.base):
 
     def api(self, data_in):
         data = data_in['data']
+        print(data)
+        if 'client' in data:
+            if 'master' == data['client']:
+                if 'get_server' == data['cmd']:
+                    return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
+                elif 'get_clients' == data['cmd']:
+                    return  self.cfg['hosts']
         if data['cmd'] == 'scan_clients':
             self._scan_hosts()
             return {'scan_state': self.scanning}

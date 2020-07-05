@@ -78,7 +78,8 @@
    --jqx-button-danger-text-color-custom-scheme: rgba(217, 83, 79, 1);
    --jqx-button-danger-background-color-custom-scheme: rgba(255, 255, 255, 1);
    --jqx-button-danger-hovered-state-text-color-custom-scheme: rgba(255, 255, 255, 1);
-   --jqx-button-danger-hovered-state-background-color-custom-scheme: rgba(217, 83, 79, 1);
+   --jqx-button-danger-hovered-state-background-color-
+custom-scheme: rgba(217, 83, 79, 1);
    --jqx-button-danger-focused-state-text-color-custom-scheme: rgba(255, 255, 255, 1);
    --jqx-button-danger-focused-state-background-color-custom-scheme: rgba(217, 83, 79, 1);
    --jqx-button-danger-active-state-text-color-custom-scheme: rgba(255, 255, 255, 1);
@@ -1288,7 +1289,7 @@
 }
 
 .jqx-checkbox-check-checked-custom-scheme {
-    background: transparent url(images/custom-scheme_check_white.png) center center no-repeat;
+    background: transparent url(images/check_white.png) center center no-repeat;
 }
 .jqx-checkbox-check-indeterminate-custom-scheme {
     width:14px !important;

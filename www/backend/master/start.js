@@ -1,9 +1,15 @@
 define(['jquery'], function($) {
   return  {
     start : function() {
-      window.server = {}
+      requirejs(['/lib/head.js'], function(mod) {
+        mod.init()
+//        requirejs(['/lib/client.js'], function(mod) {
+//          window.client = mod.start
+//          window.client.init()
+//        })
+      })
+/*      window.server = {}
       window.server.hosts = []
-
       html = '<div id="mainSplitter"><div id="panel-master"><div id="host_select"></div>'
       html += '<input type="button" value="Scannen nach Clients" id="scan" />'
       html += '</div><div style="height: 100%, width: 100%"><div id="client_area"><h1>'
@@ -58,7 +64,7 @@ define(['jquery'], function($) {
         requirejs(['/lib/client.js'], function(mod) {
           window.client = mod.start
         })
-      });
+      });*/
     }
   }
 });

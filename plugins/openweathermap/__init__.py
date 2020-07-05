@@ -76,7 +76,7 @@ class plugin(plugins.base):
                         l += 1
             except Exeception as e:
                 self.sh.log.error(str(e))
-            print(self.sensors)
+            print("Anzahl: ", len(self.sensors))
 
     def stop(self):
         if self.timer:
