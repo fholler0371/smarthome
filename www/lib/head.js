@@ -19,24 +19,21 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
         window.head.menu.jqxMenu('open', 16 , 48);
         window.head.menu.off('itemclick')
         window.head.menu.on('itemclick', function(event) {
+          for (const[name, mod] of Object.entries(window.module)) {
+             mod.stop()
+          }
           var element = event.args;
           var mod = $(element).data('mod')
           var p1 = $(element).data('p1')+'1'
           var p2 = $(element).data('p2')+'2'
           var p3 = $(element).data('p3')+'3'
-          if (window.module == undefined) {
-            window.module = {}
-          }
-          if (window.module_const == undefined) {
-            window.module_const = {}
-          }
           var paths = {}
           paths['mod.'+mod] = 'module/'+mod
           requirejs.config({paths:paths})
           window.module_const['mod.'+mod] = {p1: p1, p2:p2, p3:p3}
           if (window.module[mod] == undefined) {
             requirejs(['mod.'+mod], function(mod) {
-              mod.init(p1,p2,p3)
+              mod.init()
             })
           } else {
              window.module[mod].init_data = {p1: p1, p2:p2, p3:p3}
@@ -85,6 +82,15 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
         return $("#TopMenu").jqxMenu({ width: '250px', autoOpenPopup: false, mode: 'popup'})
       }
       window.head.menu = makeMenu([], false)
+      window.module = {}
+      window.module_const = {}
+      var paths = {}
+      paths['mod.clock'] = 'module/clock'
+      requirejs.config({paths:paths})
+      window.module_const['mod.clock'] = {p1: 0, p2: 0, p3: 0}
+      requirejs(['mod.clock'], function(mod) {
+        mod.init()
+      })
       console.log('xXx')
     },
     menu : false
