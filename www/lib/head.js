@@ -20,13 +20,27 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
         window.head.menu.off('itemclick')
         window.head.menu.on('itemclick', function(event) {
           var element = event.args;
-          var cmd = $(element).data('cmd')
-          if (cmd == 'sm_scan') {
-            window.smcall({'client': 'master', 'cmd':'server_scan'}, function(data) {
-              console.log(data)
+          var mod = $(element).data('mod')
+          var p1 = $(element).data('p1')+'1'
+          var p2 = $(element).data('p2')+'2'
+          var p3 = $(element).data('p3')+'3'
+          if (window.module == undefined) {
+            window.module = {}
+          }
+          if (window.module_const == undefined) {
+            window.module_const = {}
+          }
+          var paths = {}
+          paths['mod.'+mod] = 'module/'+mod
+          requirejs.config({paths:paths})
+          window.module_const['mod.'+mod] = {p1: p1, p2:p2, p3:p3}
+          if (window.module[mod] == undefined) {
+            requirejs(['mod.'+mod], function(mod) {
+              mod.init(p1,p2,p3)
             })
           } else {
-            console.log(cmd)
+             window.module[mod].init_data = {p1: p1, p2:p2, p3:p3}
+             window.module[mod].init()
           }
         })
       })
@@ -52,7 +66,7 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       })
       makeMenu = function(server, scan) {
         html = '<div id="TopMenu" style="visibility: hidden;"><ul>'
-        html += '<li data-cmd="sm"><a href="#">Smarthome</a></li>'
+        html += '<li data-mod="clock"><a href="#">Uhr</a></li>'
         var l = server.length
         if (l > 0) {
           html += '<li type="separator"></li>'
