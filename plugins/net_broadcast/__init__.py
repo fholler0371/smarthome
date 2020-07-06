@@ -13,6 +13,7 @@ class UDPClient(Thread):
         self.message = message
         self.running = True
         self.client = None
+        self.resv = []
 
     def run(self):
         client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -24,22 +25,27 @@ class UDPClient(Thread):
         self.client = client
         while self.running:
             readable, writable, errored = select.select(read_list, [], [], 0)
-            for sock in readable:
-                if sock == client:
-                    data, addr = client.recvfrom(1024)
-                    if data == b'HollerHome':
-                         self.send(self.message)
-                         print("received message: %s" % data)
-                    else:
-                         print("received xxx: %s" % data)
-            time.sleep(1.1)
+            if len(readable) > 0:
+                for sock in readable:
+                    if sock == client:
+                        data, addr = client.recvfrom(1024)
+                        if data == b'HollerHome':
+                            self.send(self.message)
+                        else:
+                            try:
+                                resv = json.loads(data.decode())
+                                self.resv.append(resv)
+                            except:
+                                pass
+            else:
+                time.sleep(.1)
 
     def send(self, message):
         client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         client.setblocking(0)
-        client.sendto(message.encode(), ("", self.port))
+        client.sendto(message.encode(), ("<broadcast>", self.port))
 
 class plugin(plugins.base):
     def __init__(self, sh, name):
@@ -72,4 +78,7 @@ class plugin(plugins.base):
             self.th.running = False
 
     def scan(self):
+        self.th.resv = []
         self.th.send('HollerHome')
+        time.sleep(1.5)
+        return self.th.resv

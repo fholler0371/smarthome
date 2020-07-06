@@ -92,6 +92,8 @@ class plugin(plugins.base):
             self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])
 
     def _scan_hosts(self):
+        hosts = self.lib['net_broadcast'].scan()
+        return hosts
         if not('network' in self.cfg):
             net = ping.guess_network()
             if net != '':
@@ -120,12 +122,7 @@ class plugin(plugins.base):
                 elif 'get_clients' == data['cmd']:
                     return  self.cfg['hosts']
                 elif 'server_scan' == data['cmd']:
-                    self.lib['net_broadcast'].scan()
-                    return  self.cfg['hosts']
-        if data['cmd'] == 'scan_clients':
-#            self._scan_hosts()
-            self.lib['net_broadcast'].scan()
-            return {'scan_state': self.scanning}
+                    return self._scan_hosts()
         elif data['cmd'] == 'get_scan_state':
             return {'scan_state': self.scanning}
         elif data['cmd'] == 'get_remote_hosts':
