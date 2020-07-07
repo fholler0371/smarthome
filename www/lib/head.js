@@ -91,6 +91,20 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       requirejs(['mod.clock'], function(mod) {
         mod.init()
       })
+      $('#loginButton').on('click', function() {
+        requirejs(['jqxwindow'], function() {
+          if ($('#login_window').length == 0) {
+            var html = '<div id="login_window"><div><span>Anmelden</span></div><div>'
+            html += '<table><tr><td><b>Nutzer<b></td><tr>'
+            html += '<tr><td><b>Password<b></td><tr>'
+            $('body').append(html + '</table></div></div>')
+            $('#login_window').jqxWindow({isModal: true})
+          } else {
+            $('#login_window').jqxWindow('open')
+          }
+          console.log('login')
+        })
+      })
       console.log('xXx')
     },
     menu : false

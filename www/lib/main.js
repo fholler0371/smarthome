@@ -19,7 +19,8 @@ requirejs.config({
         jqxpanel: 'jqwidgets/jqxpanel',
         jqxinput: 'jqwidgets/jqxinput',
         jqxnumberinput: 'jqwidgets/jqxnumberinput',
-        jqxmenu: 'jqwidgets/jqxmenu'
+        jqxmenu: 'jqwidgets/jqxmenu',
+        jqxwindow: 'jqwidgets/jqxwindow'
     },
     shim:{
         jqxcore : {
