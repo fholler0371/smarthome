@@ -92,13 +92,18 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
         mod.init()
       })
       $('#loginButton').on('click', function() {
-        requirejs(['jqxwindow'], function() {
+        requirejs(['jqxwindow', 'jqxinput', 'jqxpasswordinput', 'jqxbutton'], function() {
           if ($('#login_window').length == 0) {
             var html = '<div id="login_window"><div><span>Anmelden</span></div><div>'
-            html += '<table><tr><td><b>Nutzer<b></td><tr>'
-            html += '<tr><td><b>Password<b></td><tr>'
+            html += '<table><tr><td><b>Nutzer<b></td><td><input type="text" id="login_user"/></td><tr>'
+            html += '<tr><td><b>Password<b></td><td><input type="password" id="login_passwd"/></td><tr>'
+            html += '<tr><td> </td><td> </td><tr>'
+            html += '<tr><td><td><input style="float:right" id="login_button" type="button" value="Anmelden" /></td><tr>'
             $('body').append(html + '</table></div></div>')
-            $('#login_window').jqxWindow({isModal: true})
+            $('#login_window').jqxWindow({isModal: true, width:375, height: 165, resizable: false})
+            $('#login_user').jqxInput({placeHolder: "Nutzer", height: 30, width: 250, minLength: 4})
+            $('#login_passwd').jqxPasswordInput({placeHolder: "Passwort", height: 30, width: 250, minLength: 4})
+            $('#login_button').jqxButton({height: 30, width: 200})
           } else {
             $('#login_window').jqxWindow('open')
           }

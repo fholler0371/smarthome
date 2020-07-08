@@ -18,6 +18,7 @@ requirejs.config({
         jqxcheckbox: 'jqwidgets/jqxcheckbox',
         jqxpanel: 'jqwidgets/jqxpanel',
         jqxinput: 'jqwidgets/jqxinput',
+        jqxpasswordinput: 'jqwidgets/jqxpasswordinput',
         jqxnumberinput: 'jqwidgets/jqxnumberinput',
         jqxmenu: 'jqwidgets/jqxmenu',
         jqxwindow: 'jqwidgets/jqxwindow'

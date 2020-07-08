@@ -2,8 +2,8 @@
    --jqx-accent-color-custom-scheme: rgba(2, 136, 209, 1);
    --jqx-text-color-custom-scheme: rgba(85, 85, 85, 1);
    --jqx-background-color-custom-scheme: rgba(255, 255, 255, 1);
-   --jqx-header-text-color-custom-scheme: rgba(117, 117, 117, 1);
-   --jqx-header-background-color-custom-scheme: rgba(255, 255, 255, 1);
+   --jqx-header-text-color-custom-scheme: rgba(255, 255, 255, 1);
+   --jqx-header-background-color-custom-scheme: rgba(2, 136, 209, 1);
    --jqx-border-color-custom-scheme: rgba(224, 224, 224, 1);
    --jqx-border-radius-custom-scheme: 2px;
    --jqx-font-family-custom-scheme: "Roboto", "Helvetice Neue", "Helvetica", "Arial", sans-serif;
@@ -144,7 +144,7 @@ custom-scheme: rgba(217, 83, 79, 1);
    --jqx-grid-arrow-down-color-custom-scheme: url('images/icon-down.png');
    --jqx-grid-arrow-right-color-custom-scheme: url('images/icon-right.png');
    --jqx-grid-arrow-left-color-custom-scheme: url('images/icon-left.png');
-   --jqx-grid-close-button-color-custom-scheme: url('images/close.png');
+   --jqx-grid-close-button-color-custom-scheme: url('images/close-white.png');
    --jqx-grid-arrow-down-hovered-color-custom-scheme: url('images/icon-down.png');
    --jqx-grid-arrow-right-hovered-color-custom-scheme: url('images/icon-right.png');
    --jqx-grid-arrow-left-hovered-color-custom-scheme: url('images/icon-left.png');
@@ -1689,6 +1689,10 @@ custom-scheme: rgba(217, 83, 79, 1);
     background-image: url('images/icon-up.png');
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.jqx-icon-close-custom-scheme {
+    background-image: url(images/close_white.png); 
 }
 
 .jqx-widget-custom-scheme .jqx-grid-group-expand-custom-scheme, .jqx-grid-group-expand-custom-scheme, .jqx-grid-column-menubutton-custom-scheme, .jqx-grid-column-sortdescbutton-custom-scheme, .jqx-expander-arrow-top-custom-scheme, .jqx-window-collapse-button-collapsed-custom-scheme, .jqx-menu-item-arrow-down-custom-scheme, .jqx-menu-item-arrow-down-selected-custom-scheme, .jqx-menu-item-arrow-down-custom-scheme, .jqx-icon-arrow-down-custom-scheme {
