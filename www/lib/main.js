@@ -3,6 +3,7 @@ requirejs.config({
     paths: {
         jquery: 'jquery/jquery-3.5.1.min',
         datepicker: 'jquery/datepicker',
+        bcrypt: 'bcrypt/bcrypt',
         jqxcore: 'jqwidgets/jqxcore',
         jqxsplitter: 'jqwidgets/jqxsplitter',
         jqxbutton: 'jqwidgets/jqxbuttons',
@@ -67,6 +68,7 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
   window.smcall = function(data, cb) {
     if (('server' in window) && ('ip' in window.server)) {
       data.client = window.server.ip
+      token = sessionStorage.getItem("token")
     }
     $.ajax({
       url: '/api',
@@ -76,6 +78,11 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
       data: JSON.stringify(data),
       dataType: 'json'
     }).done(function(data) {
+      if (!data.login) {
+        sessionStorage.removeItem("token")
+      } else {
+        sessionStorage.setItem("token", data.token)
+      }
       this(data)
     })
   }

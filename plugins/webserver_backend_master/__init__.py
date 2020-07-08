@@ -24,6 +24,7 @@ import urllib.request
 
 import plugins
 import bin.ping as ping
+import plugins.webserver_backend_master.auth as auth
 
 class scanThread(Thread):
     def __init__(self, log, net, pl, client_port):
@@ -117,7 +118,11 @@ class plugin(plugins.base):
         print(data)
         if 'client' in data:
             if 'master' == data['client']:
-                if 'get_server' == data['cmd']:
+                if 'get_salt' == data['cmd']:
+                    out = auth.getSalt(self.sh, data)
+                    print(out)
+                    return out
+                elif 'get_server' == data['cmd']:
                     return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
                 elif 'get_clients' == data['cmd']:
                     return  self.cfg['hosts']

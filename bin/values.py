@@ -55,3 +55,5 @@ class basic():
 
         self.server_name = os.uname()[1]
         self.friendly_name = os.uname()[1]
+
+        self.aes_key = ''

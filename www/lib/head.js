@@ -104,10 +104,22 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
             $('#login_user').jqxInput({placeHolder: "Nutzer", height: 30, width: 250, minLength: 4})
             $('#login_passwd').jqxPasswordInput({placeHolder: "Passwort", height: 30, width: 250, minLength: 4})
             $('#login_button').jqxButton({height: 30, width: 200})
+            $('#login_button').on('click', function() {
+              $('#login_user').jqxInput({disabled: true })
+              $('#login_passwd').jqxPasswordInput({disabled: true })
+              $('#login_button').jqxButton({disabled: true })
+              window.smcall({'client': 'master', 'cmd':'get_salt', 'data': {'user': $('#login_user').val(),
+                                                                            'passwd': $('#login_passwd').val()}}, function(data) {
+                console.log(data)
+              })
+            })
           } else {
+            $('#login_user').jqxInput({disabled: false })
+            $('#login_passwd').jqxPasswordInput({disabled: false })
+            $('#login_passwd').val('')
+            $('#login_button').jqxButton({disabled: false })
             $('#login_window').jqxWindow('open')
           }
-          console.log('login')
         })
       })
       console.log('xXx')
