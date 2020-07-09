@@ -59,8 +59,28 @@ def encode(sh, _in):
      check_aes(sh)
      out = _in
      cipher = AES.new(sh.const.aes_key[:16].encode(), AES.MODE_EAX)
+     _in['token']['timeout'] = int(time.time()+900)
+     if 'cmd' in _in['token']:
+         del _in['token']['cmd']
+     if 'client' in _in['token']:
+         del _in['token']['client']
      token = json.dumps(_in['token']).encode()
      ciphertext, tag = cipher.encrypt_and_digest(token)
-     out['token'] = base64.encodestring(ciphertext).decode()
+     out['token'] = base64.encodestring(cipher.nonce+ciphertext).decode()
      return out
 
+def decode(sh, _in):
+    check_aes(sh)
+    out = _in
+    try:
+        ciphertext = base64.decodestring(_in['token'].encode())
+        nonce = ciphertext[:AES.block_size]
+        ciphertext = ciphertext[AES.block_size:]
+        cipher = AES.new(sh.const.aes_key[:16].encode(), AES.MODE_EAX, nonce=nonce)
+        text = cipher.decrypt(ciphertext)
+        out['token'] = json.loads(text.decode())
+        out['login'] = out['token']['timeout'] > time.time()
+    except:
+        out['login'] = False
+        pass
+    return out

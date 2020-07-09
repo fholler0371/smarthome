@@ -25,7 +25,7 @@
   position: relative;
   top: 0.875rem
 }
-#loginButton {
+#loginButton, #logoutButton {
   top: 0.625rem;
   right: 0.625rem;
 }
@@ -39,6 +39,13 @@
   font-size: 2.25rem;
   left: 22rem;
   top: 0.31rem;
+}
+#user_name {
+  position: absolute;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.75rem;
+  right: 4rem;
+  top: 0.9rem;
 }
 .leftMenuSmall > #host_name {
   left: 7rem;

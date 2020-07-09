@@ -68,7 +68,10 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
   window.smcall = function(data, cb) {
     if (('server' in window) && ('ip' in window.server)) {
       data.client = window.server.ip
-      token = sessionStorage.getItem("token")
+    }
+    token = sessionStorage.getItem("token")
+    if (token != null) {
+      data.token = token
     }
     $.ajax({
       url: '/api',
@@ -80,6 +83,9 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
     }).done(function(data) {
       if (!data.login) {
         sessionStorage.removeItem("token")
+        try {
+          window.head.logout()
+        } catch(err) {}
       } else {
         sessionStorage.setItem("token", data.token)
       }

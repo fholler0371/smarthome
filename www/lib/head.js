@@ -3,17 +3,17 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
     init: function() {
       html = '<div id="mainTop"><div class="leftMenu" style="height:100%;"><input type="button" id="burgerMenu" />'
       html +='<span id="slogan">Smart Live</span><input type="button" id="menuSmall" />'
-      html += '</div><span id="host_name"></span><input type="button" id="loginButton" /></div>'
+      html += '</div><span id="host_name"></span><span id="user_name"></span>'
+      html += '<input type="button" id="logoutButton" /><input type="button" id="loginButton" /></div>'
       html += '<div id="client_area"></div>'
       $('body').html(html)
       $("#menuSmall").jqxButton({ width: '1.75rem', height: '1.75rem', imgSrc: "/lib/img/left-24-white.png", imgHeight: 24, imgWidth: 24})
       $("#loginButton").jqxButton({ width: '2.4rem', height: '2.4rem', imgSrc: "/lib/img/login-36-white.png", imgHeight: 36, imgWidth: 36})
-      get_remote_hosts = function() {
-        window.smcall({'client': 'master', 'cmd':'get_clients'}, function(data) {
-          window.head.menu.jqxMenu('destroy')
-          window.head.menu = makeMenu(data, true)
-        })
-      }
+      $("#logoutButton").jqxButton({ width: '2.4rem', height: '2.4rem', imgSrc: "/lib/img/logout-36-white.png", imgHeight: 36, imgWidth: 36})
+      $("#logoutButton").hide()
+      $("#logoutButton").on('click', function() {
+        window.head.logout()
+      })
       $("#burgerMenu").jqxButton({ width: '2.4rem', height: '2.4rem', imgSrc: "/lib/img/menu-36-white.png", imgHeight: 36, imgWidth: 36})
       $("#burgerMenu").on('click', function() {
         window.head.menu.jqxMenu('open', 16 , 48);
@@ -41,8 +41,8 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
           }
         })
       })
-      $("#loginButton, #burgerMenu").css('position', 'absolute')
-      $("#menuSmall > img, #loginButton > img, #burgerMenu > img").css({'top': 1, 'left': 1})
+      $("#loginButton, #logoutButton, #burgerMenu").css('position', 'absolute')
+      $("#menuSmall > img, #loginButton > img, #logoutButton > img, #burgerMenu > img").css({'top': 1, 'left': 1})
       $("#menuSmall").on('click', function() {
         $('#mainTop').toggleClass('leftMenuSmall')
         if ($('#mainTop').hasClass('leftMenuSmall')) {
@@ -53,13 +53,6 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
           $('#menuSmall').jqxButton({ imgSrc: '/lib/img/left-24-white.png' });
         }
         $("#menuSmall > img").css({'top': 1, 'left': 1})
-      })
-      window.smcall({'client': 'master', 'cmd':'get_server'}, function(data) {
-        $("#host_name").html("Server: " + data.friendly_name)
-        $("#host_name").data('data', data)
-        if (data.master) {
-          get_remote_hosts()
-        }
       })
       makeMenu = function(server, scan) {
         html = '<div id="TopMenu" style="visibility: hidden;"><ul>'
@@ -110,7 +103,18 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
               $('#login_button').jqxButton({disabled: true })
               window.smcall({'client': 'master', 'cmd':'get_salt', 'data': {'user': $('#login_user').val(),
                                                                             'passwd': $('#login_passwd').val()}}, function(data) {
-                console.log(data)
+                $('#login_window').jqxWindow('close')
+                if (data.login) {
+                  $('#loginButton').hide()
+                  $('#logoutButton').show()
+                  $('#user_name').show()
+                  $('#user_name').html(data.name)
+                  window.head.tick()
+                  window.head.get_menu()
+                } else {
+                  window.head.logout()
+                  sessionStorage.removeItem("token")
+                }
               })
             })
           } else {
@@ -122,9 +126,50 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
           }
         })
       })
+      if (sessionStorage.getItem("token") != null) {
+        window.head.get_menu()
+      }
+      $('*').on('mousemove click mouseup mousedown keydown keypress keyup submit change mouseenter scroll resize dblclick',
+                window.head.get_user_movement)
       console.log('xXx')
     },
-    menu : false
+    logout : function() {
+      if ($('#login_window').length != 0) {
+        $('#login_window').jqxWindow('close')
+      }
+      $('#loginButton').show()
+      $('#logoutButton').hide()
+      $('#user_name').hide()
+      sessionStorage.removeItem("token")
+    },
+    get_menu : function() {
+//      window.smcall({'client': 'master', 'cmd':'get_menu', 'data': {}}, function(data) {
+//        console.log(data)
+//      })
+    },
+    get_user_movement : function() {
+      window.head.count = 600
+    },
+    tick : function() {
+      window.head.count = window.head.count - 1
+      window.head.keep = window.head.keep - 1
+      if (sessionStorage.getItem("token") != null) {
+        setTimeout(window.head.tick, 1E3)
+      }
+      if (window.head.count <= 0) {
+        window.head.logout()
+      }
+      if (window.head.keep <= 0) {
+        window.head.keep = 60
+        window.head.keep_alive()
+      }
+    },
+    keep_alive : function() {
+      window.smcall({'client': 'master', 'cmd':'keep_alive', 'data': {}}, function() {})
+    },
+    menu : false,
+    count : 600,
+    keep: 60
   }
   return window.head
 })

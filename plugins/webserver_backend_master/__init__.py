@@ -120,14 +120,22 @@ class plugin(plugins.base):
             if 'master' == data['client']:
                 if 'get_salt' == data['cmd']:
                     out = auth.getSalt(self.sh, data)
-                    print(out)
-                    return out
+                elif 'keep_alive' == data['cmd']:
+                    out = auth.decode(self.sh, data)
+                    if out['login']:
+                        out = auth.encode(self.sh, out)
                 elif 'get_server' == data['cmd']:
                     return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
                 elif 'get_clients' == data['cmd']:
                     return  self.cfg['hosts']
                 elif 'server_scan' == data['cmd']:
                     return self._scan_hosts()
+                if not out['login']:
+                    if 'token' in out:
+                        del out['token']
+                    del out['cmd']
+                    del out['client']
+                return out
         elif data['cmd'] == 'get_scan_state':
             return {'scan_state': self.scanning}
         elif data['cmd'] == 'get_remote_hosts':
