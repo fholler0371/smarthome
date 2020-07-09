@@ -54,27 +54,7 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
         }
         $("#menuSmall > img").css({'top': 1, 'left': 1})
       })
-      makeMenu = function(server, scan) {
-        html = '<div id="TopMenu" style="visibility: hidden;"><ul>'
-        html += '<li data-mod="clock"><a href="#">Uhr</a></li>'
-        var l = server.length
-        if (l > 0) {
-          html += '<li type="separator"></li>'
-          html += '<li>Backend-Server<ul>'
-          for (var i = 0; i < l; i++) {
-            html += '<li data-cmd="sm_host" data-id="' + i + '"><a href="#">' + server[i].hostname + '</a></li>'
-          }
-          html += '</ul></li>'
-        }
-        if (scan) {
-          html += '<li type="separator"></li>'
-          html += '<li  data-cmd="sm_scan"><a href="#">Backenderver suchen</a></li>'
-        }
-        html += '</ul></div>'
-        $('body').append(html)
-        return $("#TopMenu").jqxMenu({ width: '250px', autoOpenPopup: false, mode: 'popup'})
-      }
-      window.head.menu = makeMenu([], false)
+      window.head.menu = window.head.makeMenu([])
       window.module = {}
       window.module_const = {}
       var paths = {}
@@ -131,7 +111,6 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       }
       $('*').on('mousemove click mouseup mousedown keydown keypress keyup submit change mouseenter scroll resize dblclick',
                 window.head.get_user_movement)
-      console.log('xXx')
     },
     logout : function() {
       if ($('#login_window').length != 0) {
@@ -141,11 +120,16 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       $('#logoutButton').hide()
       $('#user_name').hide()
       sessionStorage.removeItem("token")
+      window.head.menu = window.head.makeMenu([])
     },
     get_menu : function() {
-//      window.smcall({'client': 'master', 'cmd':'get_menu', 'data': {}}, function(data) {
-//        console.log(data)
-//      })
+      window.smcall({'client': 'master', 'cmd':'get_menu', 'data': {}}, function(data) {
+        if (data.login) {
+          window.head.menu = window.head.makeMenu(data.data)
+        } else {
+          window.head.menu = window.head.makeMenu([])
+        }
+      })
     },
     get_user_movement : function() {
       window.head.count = 600
@@ -166,6 +150,23 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
     },
     keep_alive : function() {
       window.smcall({'client': 'master', 'cmd':'keep_alive', 'data': {}}, function() {})
+    },
+    makeMenu : function(data) {
+      try {
+        window.head.menu.jqxMenu('destroy')
+      } catch(err) {}
+      html = '<div id="TopMenu" style="visibility: hidden;"><ul>'
+      html += '<li data-mod="clock"><a href="#">Uhr</a></li>'
+      var l = data.length
+      if (l > 0) {
+        for (var i=0; i<l; i++) {
+          entry = data[i]
+          html += '<li  data-mod="'+entry.mod+'" data-p1="'+entry.p1+'" data-p1="'+entry.p1+'" data-p2="'+entry.p2+'">'+entry.label+'</li>'
+        }
+      }
+      html += '</ul></div>'
+      $('body').append(html)
+      return $("#TopMenu").jqxMenu({ width: '250px', autoOpenPopup: false, mode: 'popup'})
     },
     menu : false,
     count : 600,

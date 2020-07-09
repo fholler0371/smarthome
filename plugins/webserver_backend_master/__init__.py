@@ -124,6 +124,12 @@ class plugin(plugins.base):
                     out = auth.decode(self.sh, data)
                     if out['login']:
                         out = auth.encode(self.sh, out)
+                elif 'get_menu' == data['cmd']:
+                    out = auth.decode(self.sh, data)
+                    out['data'] = []
+                    out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan'})
+                    if out['login']:
+                        out = auth.encode(self.sh, out)
                 elif 'get_server' == data['cmd']:
                     return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
                 elif 'get_clients' == data['cmd']:
