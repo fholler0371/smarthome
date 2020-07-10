@@ -25,7 +25,7 @@ def getSalt(sh, data):
         if bcrypt.checkpw(password.encode(), passwd.encode()):
             out['login'] = True
             out['name'] = name
-            out['token'] = {'timeout': int(time.time()+900)}
+            out['token'] = {'timeout': int(time.time()+900), 'packages': ['sm_backend']}
             out = encode(sh, out)
 #    except:
 #        pass

@@ -1,6 +1,7 @@
 define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
   window.head = {
     init: function() {
+      sessionStorage.removeItem("token")
       html = '<div id="mainTop"><div class="leftMenu" style="height:100%;"><input type="button" id="burgerMenu" />'
       html +='<span id="slogan">Smart Live</span><input type="button" id="menuSmall" />'
       html += '</div><span id="host_name"></span><span id="user_name"></span>'
@@ -19,14 +20,16 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
         window.head.menu.jqxMenu('open', 16 , 48);
         window.head.menu.off('itemclick')
         window.head.menu.on('itemclick', function(event) {
-          for (const[name, mod] of Object.entries(window.module)) {
-             mod.stop()
-          }
           var element = event.args;
+          if ($(element).data('display') != 'no') {
+            for (const[name, mod] of Object.entries(window.module)) {
+              mod.stop()
+            }
+          }
           var mod = $(element).data('mod')
-          var p1 = $(element).data('p1')+'1'
-          var p2 = $(element).data('p2')+'2'
-          var p3 = $(element).data('p3')+'3'
+          var p1 = $(element).data('p1')
+          var p2 = $(element).data('p2')
+          var p3 = $(element).data('p3')
           var paths = {}
           paths['mod.'+mod] = 'module/'+mod
           requirejs.config({paths:paths})
@@ -161,7 +164,13 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       if (l > 0) {
         for (var i=0; i<l; i++) {
           entry = data[i]
-          html += '<li  data-mod="'+entry.mod+'" data-p1="'+entry.p1+'" data-p1="'+entry.p1+'" data-p2="'+entry.p2+'">'+entry.label+'</li>'
+          html += '<li  data-mod="'+entry.mod+'" data-p1="'+entry.p1+'" data-p1="'+entry.p1+'" data-p2="'+entry.p2+'"'
+          if (entry.display != undefined) {
+            if (!entry.display) {
+              html += ' data-display="no"'
+            }
+          }
+          html += '>'+entry.label+'</li>'
         }
       }
       html += '</ul></div>'

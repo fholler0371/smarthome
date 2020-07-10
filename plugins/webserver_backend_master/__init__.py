@@ -127,21 +127,28 @@ class plugin(plugins.base):
                 elif 'get_menu' == data['cmd']:
                     out = auth.decode(self.sh, data)
                     out['data'] = []
-                    out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan'})
                     if out['login']:
+                        if 'sm_backend' in out['token']['packages']:
+                            out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan', 'display':False})
                         out = auth.encode(self.sh, out)
                 elif 'get_server' == data['cmd']:
                     return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
                 elif 'get_clients' == data['cmd']:
                     return  self.cfg['hosts']
-                elif 'server_scan' == data['cmd']:
-                    return self._scan_hosts()
-                if not out['login']:
-                    if 'token' in out:
-                        del out['token']
-                    del out['cmd']
-                    del out['client']
-                return out
+            else:
+                out = auth.decode(self.sh, data)
+                if out['login']:
+                    if 'sm_backend' == data['client'] and 'sm_backend' in out['token']['packages']:
+                        print(data['cmd'])
+                    out = auth.encode(self.sh, out)
+            if not out['login']:
+                if 'token' in out:
+                    del out['token']
+            if 'cmd' in out:
+                del out['cmd']
+            if 'client' in out:
+                del out['client']
+            return out
         elif data['cmd'] == 'get_scan_state':
             return {'scan_state': self.scanning}
         elif data['cmd'] == 'get_remote_hosts':
