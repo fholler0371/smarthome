@@ -3,7 +3,6 @@ requirejs.config({
     paths: {
         jquery: 'jquery/jquery-3.5.1.min',
         datepicker: 'jquery/datepicker',
-        bcrypt: 'bcrypt/bcrypt',
         jqxcore: 'jqwidgets/jqxcore',
         jqxsplitter: 'jqwidgets/jqxsplitter',
         jqxbutton: 'jqwidgets/jqxbuttons',
