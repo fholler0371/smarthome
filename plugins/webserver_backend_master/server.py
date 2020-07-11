@@ -21,8 +21,6 @@ from socketserver import ThreadingMixIn
 from functools import partial
 import urllib.request
 
-import plugins
-
 class last_call(Thread):
     ''' Classe zum senden des Last-Call '''
     def __init(self, url):
@@ -132,16 +130,11 @@ class loopThread(Thread):
     def run(self):
         self.server.serve_forever()
 
-class plugin(plugins.base):
-    ''' Klasse des Plugins ohne weitere Funktion stellt nur den Call
-     zum erstellen und beenden des Servers bereit '''
-
-    def __init__(self, sh, name):
+class server:
+    def __init__(self, sh):
         ''' Standard init des Plugins '''
-        plugins.base.__init__(self, sh, name)
-        self.sh.log.info(name + '__init__')
-        self.loaded = True
-        self.sh.plugins.register(self)
+        self.sh = sh
+        self.sh.log.info('__init__')
 
     def webserver_run(self, port, path, lib, api):
         ''' Startet einen Webserver
