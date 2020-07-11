@@ -25,6 +25,7 @@ import urllib.request
 import plugins
 import bin.ping as ping
 import plugins.webserver_backend_master.auth as auth
+import plugins.webserver_backend_master.server as server
 
 class scanThread(Thread):
     def __init__(self, log, net, pl, client_port):
@@ -70,7 +71,7 @@ class plugin(plugins.base):
         self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
-        self.require = ['webserver', 'net_broadcast']
+        self.require = ['net_broadcast']
         self.get_requirements()
 
         ''' wenn alles Ok Plugin registrieren '''
@@ -84,13 +85,13 @@ class plugin(plugins.base):
     def run(self):
         ''' starten des Plugins '''
         self.sh.log.info('run')
-        if self.loaded:
-            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api)
+        self.main_server = server.server(self.sh)
+        self.main_server.webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api)
 
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
-        if self.server:
-            self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])
+        if self.main_server:
+            self.main_server.webserver_stop()
 
     def _scan_hosts(self):
         hosts = self.lib['net_broadcast'].scan()

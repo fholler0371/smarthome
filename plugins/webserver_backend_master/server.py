@@ -149,18 +149,18 @@ class server:
             Object des HTTPServer
         '''
         self.sh.log.info('webserver_run')
+        self.port = port
 
         ''' Erstellen des Servers '''
         handler = partial(webserverHandler, self.sh, path, lib, api)
-        server = ThreadedHTTPServer(('0.0.0.0', port), handler)
+        self.server = ThreadedHTTPServer(('0.0.0.0', port), handler)
 
         ''' Starten des Servers '''
-        th = loopThread(server)
+        th = loopThread(self.server)
         th.start()
 
-        return server
 
-    def webserver_stop(self, server, port):
+    def webserver_stop(self):
         ''' Stopt den Webserver und sendet Last-Call
         Param:
             server: server objeckt
@@ -168,11 +168,11 @@ class server:
         '''
         self.sh.log.info('webserver_stop')
 
-        if server:
-            server.shutdown()
+        if self.server:
+            self.server.shutdown()
 
         ''' sende Last-Call '''
         try:
-            last_call("http://localhost:"+str(port)).start()
+            last_call("http://localhost:"+str(self.port)).start()
         except:
             pass
