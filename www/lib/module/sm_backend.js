@@ -10,8 +10,7 @@ define(['module'], function(module) {
     },
     scan : function() {
       window.smcall({'client': 'sm_backend', 'cmd':'scan', 'data': {}}, function(data) {
-        console.log('scan')
-        console.log(data)
+        window.head.get_menu()
       })
     }
   }

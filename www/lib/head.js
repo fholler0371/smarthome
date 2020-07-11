@@ -1,7 +1,7 @@
 define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
   window.head = {
     init: function() {
-      sessionStorage.removeItem("token")
+      window.head.logout()
       html = '<div id="mainTop"><div class="leftMenu" style="height:100%;"><input type="button" id="burgerMenu" />'
       html +='<span id="slogan">Smart Live</span><input type="button" id="menuSmall" />'
       html += '</div><span id="host_name"></span><span id="user_name"></span>'
@@ -164,13 +164,29 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       if (l > 0) {
         for (var i=0; i<l; i++) {
           entry = data[i]
-          html += '<li  data-mod="'+entry.mod+'" data-p1="'+entry.p1+'" data-p1="'+entry.p1+'" data-p2="'+entry.p2+'"'
-          if (entry.display != undefined) {
-            if (!entry.display) {
-              html += ' data-display="no"'
+          if ('sub' in entry) {
+            html += '<li>'+entry.label+'<ul>'
+            var l1 = entry.sub.length
+            for (var i1=0; i1<l1; i1++) {
+              entry1 = entry.sub[i]
+              html += '<li  data-mod="'+entry1.mod+'" data-p1="'+entry1.p1+'" data-p2="'+entry1.p2+'" data-p3="'+entry1.p3+'"'
+              if (entry1.display != undefined) {
+                if (!entry1.display) {
+                  html += ' data-display="no"'
+                }
+              }
+              html += '>'+entry1.label+'</li>'
             }
+            html += '</ul></li>'
+          } else {
+            html += '<li  data-mod="'+entry.mod+'" data-p1="'+entry.p1+'" data-p2="'+entry.p2+'" data-p3="'+entry.p3+'"'
+            if (entry.display != undefined) {
+              if (!entry.display) {
+                html += ' data-display="no"'
+              }
+            }
+            html += '>'+entry.label+'</li>'
           }
-          html += '>'+entry.label+'</li>'
         }
       }
       html += '</ul></div>'

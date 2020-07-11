@@ -13,7 +13,7 @@ def getSalt(sh, data):
     del data['data']
     if 'token' in out:
         del out['token']
-    if True:
+    try:
         file = sh.const.path+'/db/auth.db'
         conn = sqlite3.connect(file)
         cur = conn.cursor()
@@ -27,8 +27,8 @@ def getSalt(sh, data):
             out['name'] = name
             out['token'] = {'timeout': int(time.time()+900), 'packages': ['sm_backend']}
             out = encode(sh, out)
-#    except:
-#        pass
+    except:
+        pass
     del out['client']
     del out['cmd']
     return out

@@ -29,7 +29,7 @@ class UDPClient(Thread):
                 for sock in readable:
                     if sock == client:
                         data, addr = client.recvfrom(1024)
-                        if data == b'HollerHome':
+                        if data == json.dumps({'detect':{}}).encode():
                             self.send(self.message)
                         else:
                             try:
@@ -69,8 +69,9 @@ class plugin(plugins.base):
             self.sh.plugins.register(self)
 
     def run(self):
-        self.th = UDPClient(self.cfg['port'], json.dumps({'name': self.sh.const.server_name,
-                                                          'ip':  self.sh.const.ip.split('/')[0]}))
+        self.th = UDPClient(self.cfg['port'], json.dumps({'detect_respondse':{'name': self.sh.const.server_name,
+                                                          'friendly_name': self.sh.const.server_name,
+                                                          'ip':  self.sh.const.ip.split('/')[0]}}))
         self.th.start()
 
     def stop(self):
@@ -79,6 +80,10 @@ class plugin(plugins.base):
 
     def scan(self):
         self.th.resv = []
-        self.th.send('HollerHome')
+        self.th.send(json.dumps({'detect':{}}))
         time.sleep(1.5)
-        return self.th.resv
+        out = []
+        for entry in self.th.resv:
+           if 'detect_respondse' in entry:
+               out.append(entry['detect_respondse'])
+        return out

@@ -94,17 +94,17 @@ class plugin(plugins.base):
 
     def _scan_hosts(self):
         hosts = self.lib['net_broadcast'].scan()
-        return hosts
-        if not('network' in self.cfg):
-            net = ping.guess_network()
-            if net != '':
-                self.cfg['network'] = net
-                self.sh.cfg.data['plugins'][self.name]['network'] = net
-                self.sh.cfg.save()
-        if 'network' in self.cfg:
-            th = scanThread(self.sh.log, self.cfg['network'], self, self.cfg['client_port'])
-            th.start()
-            self.scanning = True
+        data = json.dumps({'client': 'master', 'cmd':'get_hostname'}).encode()
+        server = []
+        for host in hosts:
+            try:
+                with urllib.request.urlopen('http://' + host['ip'] + ':' + str(self.cfg['client_port']) + '/api', data) as f:
+                     server.append(host)
+            except:
+                pass
+        self.cfg['hosts'] = server
+        self.sh.cfg.data['hosts'] = server
+        self.sh.cfg.save()
 
     def getClientAPI(self, data):
         jdata = json.dumps(data).encode()
@@ -129,6 +129,12 @@ class plugin(plugins.base):
                     out['data'] = []
                     if out['login']:
                         if 'sm_backend' in out['token']['packages']:
+                            if len(self.cfg['hosts']) > 0:
+                                inner = []
+                                for host in self.cfg['hosts']:
+                                   inner.append({'label': host['friendly_name'], 'mod': 'sm_backend', 'p1':'client', 'p2':host['ip'],
+                                                                                                      'p3': host['friendly_name']})
+                                out['data'].append({'label': 'Backends', 'sub': inner})
                             out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan', 'display':False})
                         out = auth.encode(self.sh, out)
                 elif 'get_server' == data['cmd']:
@@ -139,7 +145,7 @@ class plugin(plugins.base):
                 out = auth.decode(self.sh, data)
                 if out['login']:
                     if 'sm_backend' == data['client'] and 'sm_backend' in out['token']['packages']:
-                        print(data['cmd'])
+                        self._scan_hosts()
                     out = auth.encode(self.sh, out)
             if not out['login']:
                 if 'token' in out:
