@@ -6,7 +6,7 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       html = '<div id="system_tabs"><ul><li>Status</li><li>Konfiguration</li><li>Wartung</li><li>Plugins</li><li>Log</li></ul>'
       html += '<div id="system_status"></div><div id="system_config"></div>'
       html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div><div><div id="system_log"></div></div></div>'
-      $('#client_right').html(html)
+      $('#sm_backend_content').html(html)
       $('#system_tabs').jqxTabs({ width: '100%', height: '100%', position: 'top'})
       $('#sytem_tool').html('<input type="button" value="update/upgrade" id="1" />')
       $('#sytem_tool').append('<input type="button" value="Neu Booten" id="2" />')
@@ -45,7 +45,7 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
         }
       })
       calltab0 = function() {
-        window.smcall({cmd:'client_get_state'}, function(data) {
+        window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_state'}}, function(data) {
           html = '<table id="state_table"><thead><tr><th  align="left">Name</th><th align="left">Wert</th></tr></thead><tbody>'
           html += '<tr><td>Typ</td><td>' + data.type + '</td></tr>'
           html += '<tr><td>Serien Nr.</td><td>' + data.serial + '</td></tr>'

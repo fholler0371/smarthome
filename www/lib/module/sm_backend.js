@@ -18,6 +18,12 @@ define(['module', 'jqxlistbox'], function(module) {
       })
     },
     client : function(ip, name) {
+      $('#head_title').text(name)
+      window.module.sm_backend.ip = ip
+      html = '<div id="sm_backend_menu"><div id="client_plugins"></div></div><div id="sm_backend_content"></div>'
+      $('#client_area').html(html)
+      $('#client_area').data('min', 'sm_backend')
+      window.module.sm_backend.setMinMenu()
       window.smcall({'client': 'sm_backend', 'cmd':'get_plugins', 'data': {'ip':ip}}, function(data) {
         window.module.sm_backend.plugins = data.data.plugins
         var plugins = []
@@ -47,18 +53,14 @@ define(['module', 'jqxlistbox'], function(module) {
           window.module.sm_backend.sm_client[window.module.sm_backend.plugin.name].func()
         })
       })
-      $('#head_title').text(name)
-      html = '<div id="sm_backend_menu"><div id="client_plugins"></div></div><div id="sm_backend_content"></div>'
-      $('#client_area').html(html)
-      $('#client_area').data('min', 'sm_backend')
-      window.module.sm_backend.setMinMenu()
     },
     setMinMenu : function() {
       console.log($('#mainTop').hasClass('leftMenuSmall'))
     },
     plugins : undefined,
     sm_clients : [],
-    sm_client : []
+    sm_client : [],
+    ip : ''
   }
   sm_backend['init_data'] = window.module_const[module.id]
   window.module.sm_backend = sm_backend
