@@ -1,7 +1,6 @@
-define(['module'], function(module) {
+define(['module', 'jqxlistbox'], function(module) {
   var sm_backend = {
     init : function() {
-      console.log(window.module.sm_backend.init_data)
       if (window.module.sm_backend.init_data.p1 == 'scan') {
         window.module.sm_backend.scan()
       }
@@ -10,6 +9,7 @@ define(['module'], function(module) {
       }
     },
     stop : function() {
+      $('#client_area').removeData('min')
       $('#head_title').text('')
     },
     scan : function() {
@@ -19,12 +19,46 @@ define(['module'], function(module) {
     },
     client : function(ip, name) {
       window.smcall({'client': 'sm_backend', 'cmd':'get_plugins', 'data': {'ip':ip}}, function(data) {
-        console.info(data)
+        window.module.sm_backend.plugins = data.data.plugins
+        var plugins = []
+        var arrayLength = data.data.plugins.length
+        for (var i = 0; i < arrayLength; i++) {
+          plugins.push(data.data.plugins[i].label);
+        }
+        $('#client_plugins').jqxListBox({selectedIndex: 0, width: '100%', height: '100%', itemHeight: 40, source: plugins})
+        $('#client_plugins').on('select', function(event) {
+          var args = event.args;
+          if (args) {
+            var index = args.index
+            window.module.sm_backend.plugin = window.module.sm_backend.plugins[index]
+            if (window.module.sm_backend.plugin.name in window.module.sm_backend.sm_clients) {
+              window.module.sm_backend.sm_clients[window.module.sm_backend.plugin.name].func()
+            } else {
+              requirejs(['sm_plugins/' + window.module.sm_backend.plugin.name], function(mod) {
+                window.module.sm_backend.sm_client[window.module.sm_backend.plugin.name] = mod
+                window.module.sm_backend.sm_client[window.module.sm_backend.plugin.name].func()
+              })
+            }
+          }
+        })
+        window.module.sm_backend.plugin = window.module.sm_backend.plugins[0]
+        requirejs(['sm_plugins/' + window.module.sm_backend.plugin.name], function(mod) {
+          window.module.sm_backend.sm_client[window.module.sm_backend.plugin.name] = mod
+          window.module.sm_backend.sm_client[window.module.sm_backend.plugin.name].func()
+        })
       })
       $('#head_title').text(name)
-      html = '<div id="sm_backend_menu"></div><div id="sm_backend_content"></div>'
+      html = '<div id="sm_backend_menu"><div id="client_plugins"></div></div><div id="sm_backend_content"></div>'
       $('#client_area').html(html)
-    }
+      $('#client_area').data('min', 'sm_backend')
+      window.module.sm_backend.setMinMenu()
+    },
+    setMinMenu : function() {
+      console.log($('#mainTop').hasClass('leftMenuSmall'))
+    },
+    plugins : undefined,
+    sm_clients : [],
+    sm_client : []
   }
   sm_backend['init_data'] = window.module_const[module.id]
   window.module.sm_backend = sm_backend

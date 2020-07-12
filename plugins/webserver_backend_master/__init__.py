@@ -178,5 +178,7 @@ class plugin(plugins.base):
             if line.startswith('X-Real-IP'):
                 has_X_Real_IP = True
         if not(has_X_Real_IP) and ping.is_ip_in_range(self.sh.const.ip, data['source-ip']):
+            if 'get_plugins' in data['data']['cmd']:
+                out['data'] = {'plugins': [{'label':'System', 'name':'system'}]}
             print('Do Something')
         return out['data']

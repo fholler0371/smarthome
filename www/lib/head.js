@@ -56,6 +56,10 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
           $('#menuSmall').jqxButton({ imgSrc: '/lib/img/left-24-white.png' });
         }
         $("#menuSmall > img").css({'top': 1, 'left': 1})
+        mod = $('#client_area').data('min')
+        if (mod != undefined) {
+          window.module[mod].setMinMenu()
+        }
       })
       window.head.menu = window.head.makeMenu([])
       window.module = {}
