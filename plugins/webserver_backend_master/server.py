@@ -39,7 +39,7 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 class webserverHandler(BaseHTTPRequestHandler):
     ''' Handler fuer Anfragen von den Browsern '''
-    def __init__(self, sh, path, lib, api, *args, **kwargs):
+    def __init__(self, sh, path, lib, api, capi, *args, **kwargs):
         ''' Initialiesierung der Klasse
         Param:
             sh: smarthome Object
@@ -51,6 +51,7 @@ class webserverHandler(BaseHTTPRequestHandler):
         self.root_path = path
         self.root_lib = lib
         self.api = api
+        self.capi = capi
         super().__init__(*args, **kwargs)
 
     def log_message(self, format, *args):
@@ -59,10 +60,18 @@ class webserverHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         self.sh.log.info('call from '+self.client_address[0])
-        print(self.client_address)
-        print(self.headers)
+#        print(self.path)
+#        print(self.client_address)
+#        print(self.headers)
         content_len = int(self.headers['Content-Length'])
-        data = json.dumps(self.api({'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+        if '/api' == self.path:
+            data = json.dumps(self.api({'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+        elif '/client-api' == self.path:
+            data = json.dumps(self.capi({'source-ip': self.client_address[0],
+                                         'headers': str(self.headers).split('\n'),
+                                         'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+        else:
+            data = json.dumps({}).encode()
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         size = len(data)
@@ -136,7 +145,7 @@ class server:
         self.sh = sh
         self.sh.log.info('__init__')
 
-    def webserver_run(self, port, path, lib, api):
+    def webserver_run(self, port, path, lib, api, capi):
         ''' Startet einen Webserver
 
         Param:
@@ -152,7 +161,7 @@ class server:
         self.port = port
 
         ''' Erstellen des Servers '''
-        handler = partial(webserverHandler, self.sh, path, lib, api)
+        handler = partial(webserverHandler, self.sh, path, lib, api, capi)
         self.server = ThreadedHTTPServer(('0.0.0.0', port), handler)
 
         ''' Starten des Servers '''

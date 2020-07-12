@@ -33,7 +33,7 @@
   top: 0.4375rem;
   left: 0.625rem;
 }
-#host_name {
+#head_title {
   position: absolute;
   font-family: 'Fredoka One', cursive;
   font-size: 2.25rem;
@@ -47,7 +47,7 @@
   right: 4rem;
   top: 0.9rem;
 }
-.leftMenuSmall > #host_name {
+.leftMenuSmall > #head_title {
   left: 7rem;
 }
 #client_area {

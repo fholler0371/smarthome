@@ -86,7 +86,7 @@ class plugin(plugins.base):
         ''' starten des Plugins '''
         self.sh.log.info('run')
         self.main_server = server.server(self.sh)
-        self.main_server.webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api)
+        self.main_server.webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api, self.client_api)
 
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
@@ -146,7 +146,13 @@ class plugin(plugins.base):
                 out = auth.decode(self.sh, data)
                 if out['login']:
                     if 'sm_backend' == data['client'] and 'sm_backend' in out['token']['packages']:
-                        self._scan_hosts()
+                        if 'scan' == data['cmd']:
+                            self._scan_hosts()
+                        elif 'get_plugins' == data['cmd']:
+                            if 'ip' in data['data']:
+                                jdata = json.dumps(out).encode()
+                                with urllib.request.urlopen('http://' + data['data']['ip'] + ':' + str(self.cfg['port']) + '/client-api', jdata) as f:
+                                    out['data'] = json.loads(f.read().decode())
                     out = auth.encode(self.sh, out)
             if not out['login']:
                 if 'token' in out:
@@ -163,3 +169,14 @@ class plugin(plugins.base):
         elif data['cmd'].startswith('client'):
             return self.getClientAPI(data)
         return data_in['data']
+
+    def client_api(self, data):
+        print(data)
+        out = data['data']
+        has_X_Real_IP = False
+        for line in data['headers']:
+            if line.startswith('X-Real-IP'):
+                has_X_Real_IP = True
+        if not(has_X_Real_IP) and ping.is_ip_in_range(self.sh.const.ip, data['source-ip']):
+            print('Do Something')
+        return out['data']

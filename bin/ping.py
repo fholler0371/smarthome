@@ -72,6 +72,14 @@ def guess_network():
     addr = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
     return addr['addr'] + '/' + addr['netmask']
 
+def is_ip_in_range(range, ip):
+    res = False
+    net = ipaddress.ip_network(range, False)
+    for host in net:
+        if ip == str(host):
+            res = True
+    return res
+
 def ping(log, host):
     log.info('Ping: '+host)
     global logger

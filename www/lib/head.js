@@ -4,7 +4,7 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       window.head.logout()
       html = '<div id="mainTop"><div class="leftMenu" style="height:100%;"><input type="button" id="burgerMenu" />'
       html +='<span id="slogan">Smart Live</span><input type="button" id="menuSmall" />'
-      html += '</div><span id="host_name"></span><span id="user_name"></span>'
+      html += '</div><span id="head_title"></span><span id="user_name"></span>'
       html += '<input type="button" id="logoutButton" /><input type="button" id="loginButton" /></div>'
       html += '<div id="client_area"></div>'
       $('body').html(html)
