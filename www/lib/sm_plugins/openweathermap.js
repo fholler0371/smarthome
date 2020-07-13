@@ -1,11 +1,11 @@
 define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox', 'jqxgrid_edit', 'jqxpanel'],
     function($) {
-  return {
+  openweathermap = {
     func : function() {
       html = '<div id="openweathermap_tabs"><ul><li>Konfiguration</li><li>Wartung</li><li>Plugins</li><li>Log</li></ul>'
       html += '<div id="openweathermap_konfig"></div>'
       html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div><div><div id="system_log"></div></div></div>'
-      $('#client_right').html(html)
+      $('#sm_backend_content').html(html)
       html = '<table><tr><td><b>API-Key:</b></td><td><input type="text" id="openweatherapi_apikey"/>'
       html += '</td></tr><tr><td><b>Timer:</b></td><td><div id="openweatherapi_intervall"></div></td></tr>'
       html += '<tr><td style="height:40px;"> </td</tr><tr><td></td><td>'
@@ -50,7 +50,7 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', '
         }
       })
       calltab0 = function() {
-        window.smcall({cmd:'client.openweathermap.get_config'}, function(data) {
+        window.smcall({'client': 'sm_backend', 'cmd':'openweathermap', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_var'}}, function(data) {
           $('#openweatherapi_apikey').val(data.api)
           $('#openweatherapi_intervall').val(data.intervall)
         })
@@ -74,4 +74,6 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', '
       calltab0()
     }
   }
+  window.module.sm_backend.sm_client.openweathermap = openweathermap
+  return openweathermap
 })

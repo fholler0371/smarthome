@@ -90,13 +90,9 @@ class plugin(plugins.base):
         self.sh.cfg.data['plugins'][self.name]['intervall'] = data['intervall']
         self.sh.cfg.save()
 
-    def webserver_api(self, data):
-        cmd = data['cmd'].split('.')[2]
-        if cmd == "get_config":
-            return  {'api': self.cfg['api'], 'intervall': self.cfg['intervall']}
-        elif cmd == "set_config":
-            self._set_config(data)
-            return  {}
-        else:
-            print(cmd)
-        return data
+    def sm_backend(self, data):
+        print(data)
+#cmd = data['cmd'].split('.')[2] return data['data'] if cmd == "get_config": return {'api': self.cfg['api'], 'intervall': self.cfg['intervall']} 
+#        elif cmd == "set_config":
+#           self._set_config(data) return {} else: print(cmd)
+        return data['data']

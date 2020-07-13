@@ -184,5 +184,11 @@ class plugin(plugins.base):
             elif 'system' in data['data']['cmd']:
                 out['data'] = system.call(self.sh, out)
             else:
-                print(data)
+                if data['data']['cmd'] in self.sh.plugins.plugins:
+                    if hasattr(self.sh.plugins.plugins[data['data']['cmd']], 'sm_backend'):
+                        out['data'] = self.sh.plugins.plugins[data['data']['cmd']].sm_backend(out)
+                    else:
+                        print('missing function')
+                else:
+                    print('plugin not found')
         return out['data']
