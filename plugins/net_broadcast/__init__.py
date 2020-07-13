@@ -7,13 +7,14 @@ import json
 import plugins
 
 class UDPClient(Thread):
-    def __init__(self, port, message):
+    def __init__(self, sh, port, message):
         Thread.__init__(self)
         self.port = port
         self.message = message
         self.running = True
         self.client = None
         self.resv = []
+        self.sh = sh
 
     def run(self):
         client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -30,7 +31,8 @@ class UDPClient(Thread):
                     if sock == client:
                         data, addr = client.recvfrom(1024)
                         if data == json.dumps({'detect':{}}).encode():
-                            self.send(self.message)
+                            self.message['detect_respondse']['friendly_name'] = self.sh.const.friendly_name
+                            self.send(json.dumps(self.message))
                         else:
                             try:
                                 resv = json.loads(data.decode())
@@ -69,9 +71,9 @@ class plugin(plugins.base):
             self.sh.plugins.register(self)
 
     def run(self):
-        self.th = UDPClient(self.cfg['port'], json.dumps({'detect_respondse':{'name': self.sh.const.server_name,
-                                                          'friendly_name': self.sh.const.friendly_name,
-                                                          'ip':  self.sh.const.ip.split('/')[0]}}))
+        self.th = UDPClient(self.sh, self.cfg['port'], {'detect_respondse':{'name': self.sh.const.server_name,
+                                                        'friendly_name': self.sh.const.friendly_name,
+                                                        'ip':  self.sh.const.ip.split('/')[0]}})
         self.th.start()
 
     def stop(self):
@@ -81,7 +83,7 @@ class plugin(plugins.base):
     def scan(self):
         self.th.resv = []
         self.th.send(json.dumps({'detect':{}}))
-        time.sleep(1.5)
+        time.sleep(2)
         out = []
         for entry in self.th.resv:
            if 'detect_respondse' in entry:

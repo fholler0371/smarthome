@@ -10,16 +10,28 @@ def call(sh, data):
         return get_state(sh)
     elif 'client_get_var' == data['data']['cmd']:
         return get_var(sh)
+    elif 'client_set_var' == data['data']['cmd']:
+        return set_var(sh, data['data'])
     print(data['data'])
     return data['data']
 
+def set_var(sh, data):
+    sh.const.geo = data['geo']
+    sh.cfg.data['geo'] = data['geo']
+    sh.const.master = data['master']
+    sh.cfg.data['master'] = data['master']
+    sh.const.friendly_name = data['friendly_name']
+    sh.cfg.data['friendly_name'] = data['friendly_name']
+    sh.cfg.save()
+    return {}
+
 def get_var(sh):
-   out = {'master': False, 'geo': {'lat': 52.5092947, 'long': 13.4178536}}
-   if hasattr(sh.const, 'geo'):
-       out['geo'] = sh.const.geo
-   out['master'] = sh.const.master
-   out['friendly_name'] = sh.const.friendly_name
-   return out
+    out = {'master': False, 'geo': {'lat': 52.5092947, 'long': 13.4178536}}
+    if hasattr(sh.const, 'geo'):
+        out['geo'] = sh.const.geo
+    out['master'] = sh.const.master
+    out['friendly_name'] = sh.const.friendly_name
+    return out
 
 
 def get_state(sh):

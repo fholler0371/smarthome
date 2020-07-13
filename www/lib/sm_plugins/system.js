@@ -1,7 +1,7 @@
 define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', 'jqxgrid_selection', 'jqxcheckbox',
     'jqxgrid_edit', 'jqxpanel'],
     function($) {
-  return {
+  system = {
     func : function() {
       html = '<div id="system_tabs"><ul><li>Status</li><li>Konfiguration</li><li>Wartung</li><li>Plugins</li><li>Log</li></ul>'
       html += '<div id="system_status"></div><div id="system_config"></div>'
@@ -24,13 +24,14 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $("#system_long").jqxInput({placeHolder: "Longitude", height: 40, width: 250});
       $('#system_send').jqxButton({width: 250, height: 40}).css('margin', '10px')
       $("#system_master").jqxCheckBox({ width: 120, height: 25});
-/*      $('#system_send').on('click', function() {
+      $('#system_send').on('click', function() {
         $("#host_name").html("Server: "+$('#system_name').val())
-        window.smcall({cmd:'client_system_set_var', 'master': $("#system_master").jqxCheckBox('val'),
-            'friendly_name': $('#system_name').val(),
-            'geo': {'lat': $('#system_lat').val(), 'long': $('#system_long').val()}}, function() {})
+        data = {'ip':window.module.sm_backend.ip, cmd:'client_set_var', 'friendly_name': $('#system_name').val(),
+                'master': $("#system_master").jqxCheckBox('val'),
+                'geo': {'lat': $('#system_lat').val(), 'long': $('#system_long').val()}}
+        window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': data}, function(data) {})
       })
-*/      $('#sytem_tool > input').on('click', function(event) {
+      $('#sytem_tool > input').on('click', function(event) {
         var id = $(event.currentTarget).attr('id')
         if (id == 1) {
           window.smcall({cmd:'client_system_update'}, function() {})
@@ -145,4 +146,6 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       })
     }
   }
+  window.module.sm_backend.sm_client.system = system
+  return system
 })

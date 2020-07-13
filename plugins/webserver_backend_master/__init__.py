@@ -96,24 +96,17 @@ class plugin(plugins.base):
 
     def _scan_hosts(self):
         hosts = self.lib['net_broadcast'].scan()
-        data = json.dumps({'client': 'master', 'cmd':'get_hostname'}).encode()
+        data = json.dumps({'client': 'master', 'cmd':'get'}).encode()
         server = []
         for host in hosts:
             try:
-                with urllib.request.urlopen('http://' + host['ip'] + ':' + str(self.cfg['client_port']) + '/api', data) as f:
+                with urllib.request.urlopen('http://' + host['ip'] + ':' + str(self.cfg['port']) + '/api', data) as f:
                      server.append(host)
             except:
                 pass
         self.cfg['hosts'] = server
         self.sh.cfg.data['hosts'] = server
         self.sh.cfg.save()
-
-    def getClientAPI(self, data):
-        jdata = json.dumps(data).encode()
-        out = {}
-        with urllib.request.urlopen('http://' + data['client'] + ':' + str(self.cfg['client_port']) + '/api', jdata) as f:
-            out = json.loads(f.read().decode())
-        return out
 
     def api(self, data_in):
         data = data_in['data']
@@ -122,6 +115,8 @@ class plugin(plugins.base):
             if 'master' == data['client']:
                 if 'get_salt' == data['cmd']:
                     out = auth.getSalt(self.sh, data)
+                elif 'get' == data['cmd']:
+                    out = {'login': False}
                 elif 'keep_alive' == data['cmd']:
                     out = auth.decode(self.sh, data)
                     if out['login']:
