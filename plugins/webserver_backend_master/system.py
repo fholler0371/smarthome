@@ -8,8 +8,18 @@ def call(sh, data):
     print("System Call")
     if 'client_get_state' == data['data']['cmd']:
         return get_state(sh)
+    elif 'client_get_var' == data['data']['cmd']:
+        return get_var(sh)
     print(data['data'])
     return data['data']
+
+def get_var(sh):
+   out = {'master': False, 'geo': {'lat': 52.5092947, 'long': 13.4178536}}
+   if hasattr(sh.const, 'geo'):
+       out['geo'] = sh.const.geo
+   out['master'] = sh.const.master
+   out['friendly_name'] = sh.const.friendly_name
+   return out
 
 
 def get_state(sh):

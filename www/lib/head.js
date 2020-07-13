@@ -128,6 +128,12 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
       $('#user_name').hide()
       sessionStorage.removeItem("token")
       window.head.menu = window.head.makeMenu([])
+      if (window.module != undefined) {
+        for (const[name, mod] of Object.entries(window.module)) {
+          mod.stop()
+        }
+        window.module.clock.init()
+      }
     },
     get_menu : function() {
       window.smcall({'client': 'master', 'cmd':'get_menu', 'data': {}}, function(data) {

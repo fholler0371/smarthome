@@ -70,7 +70,7 @@ class plugin(plugins.base):
 
     def run(self):
         self.th = UDPClient(self.cfg['port'], json.dumps({'detect_respondse':{'name': self.sh.const.server_name,
-                                                          'friendly_name': self.sh.const.server_name,
+                                                          'friendly_name': self.sh.const.friendly_name,
                                                           'ip':  self.sh.const.ip.split('/')[0]}}))
         self.th.start()
 

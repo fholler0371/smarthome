@@ -131,13 +131,17 @@ class plugin(plugins.base):
                     out['data'] = []
                     if out['login']:
                         if 'sm_backend' in out['token']['packages']:
-                            if len(self.cfg['hosts']) > 0:
-                                inner = []
-                                for host in self.cfg['hosts']:
-                                   inner.append({'label': host['friendly_name'], 'mod': 'sm_backend', 'p1':'client', 'p2':host['ip'],
-                                                                                                      'p3': host['friendly_name']})
-                                out['data'].append({'label': 'Backends', 'sub': inner})
-                            out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan', 'display':False})
+                            if self.sh.const.master:
+                                if len(self.cfg['hosts']) > 0:
+                                    inner = []
+                                    for host in self.cfg['hosts']:
+                                        inner.append({'label': host['friendly_name'], 'mod': 'sm_backend', 'p1':'client', 'p2':host['ip'],
+                                                                                                           'p3': host['friendly_name']})
+                                    out['data'].append({'label': 'Backends', 'sub': inner})
+                                out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan', 'display':False})
+                            else:
+                                out['data'].append({'label': 'Backend', 'mod': 'sm_backend', 'p1':'client', 'p2':self.sh.const.ip.split('/')[0],
+                                                                                                            'p3':self.sh.const.friendly_name})
                         out = auth.encode(self.sh, out)
                 elif 'get_server' == data['cmd']:
                     return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}

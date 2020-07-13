@@ -136,12 +136,13 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $("#system_log").jqxPanel({ width: '100%', height: '100%'});
       $("#system_log").parent().css('overflow', 'hidden')
       calltab0()
-/*      window.smcall({cmd:'client_system_get_var'}, function(data) {
+      window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_var'}}, function(data) {
+        var data = data.data
         $("#system_master").jqxCheckBox('val', data.master)
         $('#system_name').val(data.friendly_name)
         $('#system_lat').val(data.geo.lat)
         $('#system_long').val(data.geo.long)
       })
-*/    }
+    }
   }
 })
