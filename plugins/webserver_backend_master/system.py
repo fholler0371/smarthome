@@ -4,6 +4,7 @@ import time
 import subprocess
 from threading import Thread
 import psutil
+import bin.config as config
 
 class systemUpgradeThread(Thread):
     def __init__(self, log):
@@ -56,7 +57,34 @@ def call(sh, data):
         return set_restart(sh)
     elif 'client_install' == data['data']['cmd']:
         return set_install(sh)
+    elif 'client_get_plugins' == data['data']['cmd']:
+        return get_plugins(sh)
+    elif 'client_set_plugins' == data['data']['cmd']:
+        return set_plugins(sh, data['data'])
     return data['data']
+
+def set_plugins(sh, data):
+    if data['value']:
+        if ('__' + data['name'] + '__') in sh.cfg.data['plugins']:
+            sh.cfg.data['plugins'][data['name']] = sh.cfg.data['plugins']['__' + data['name'] + '__']
+            del sh.cfg.data['plugins']['__' + data['name'] + '__']
+        else:
+            sh.cfg.data['plugins'][data['name']] = {}
+    else:
+        sh.cfg.data['plugins']['__' + data['name'] + '__'] = sh.cfg.data['plugins'][data['name']]
+        del sh.cfg.data['plugins'][data['name']]
+    sh.cfg.save()
+    return {}
+
+def get_plugins(sh):
+    out = []
+    for name in os.listdir(sh.const.path + '/plugins'):
+        if not name.startswith('__'):
+            cfg = config.load(sh, name + '/properties' , path='plugins')
+            if cfg.data != {}:
+                out.append({'name': name, 'active': name in sh.plugins.plugins, 'background': cfg.data['background'],
+                           'friendly': cfg.data['friendly'], 'description': cfg.data['description']})
+    return out
 
 def set_reboot(sh):
     th = systemInstallThread(sh.log)

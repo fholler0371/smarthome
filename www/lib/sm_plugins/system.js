@@ -74,9 +74,9 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
         })
       }
       calltab2 = function() {
-        window.smcall({cmd:'client_system_plugins'}, function(data) {
+        window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_plugins'}}, function(data) {
           var source = {
-            localdata: data,
+            localdata: data.data,
             datatype: "array",
             datafields: [
               { name: 'name', type: 'string' },
@@ -111,7 +111,11 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
           $("#system_plugins").on('cellendedit', function (event) {
             var args = event.args
             var data = $('#system_plugins').jqxGrid('getrowdatabyid', args.rowindex);
-            window.smcall({cmd:'client_system_plugin_change', 'name': data.name, 'value': args.value}, function(data) {})
+            window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip,
+                                                                            cmd:'client_set_plugins',
+                                                                            'name': data.name,
+                                                                            'value': args.value}},
+                function() {})
           })
         })
       }
