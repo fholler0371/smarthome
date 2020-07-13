@@ -55,7 +55,17 @@ define(['module', 'jqxlistbox'], function(module) {
       })
     },
     setMinMenu : function() {
-      console.log($('#mainTop').hasClass('leftMenuSmall'))
+      if ($('#mainTop').hasClass('leftMenuSmall')) {
+        $('#sm_backend_menu').css('width', 0)
+        $('#sm_backend_content').css('width', '100%')
+        $('#sm_backend_content').css('left', '0')
+      } else {
+        var w = $('.leftMenu').width()
+        $('#sm_backend_menu').width(w)
+        $('#sm_backend_content').css('width', 'calc( 100% - '+w+'px )')
+        $('#sm_backend_content').css('left', w+'px')
+        $('#client_plugins').jqxListBox('render')
+      }
     },
     plugins : undefined,
     sm_clients : [],

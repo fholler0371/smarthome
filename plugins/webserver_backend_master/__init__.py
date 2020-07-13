@@ -24,6 +24,7 @@ import urllib.request
 
 import plugins
 import bin.ping as ping
+import bin.config as config
 import plugins.webserver_backend_master.auth as auth
 import plugins.webserver_backend_master.server as server
 import plugins.webserver_backend_master.system as system
@@ -176,6 +177,10 @@ class plugin(plugins.base):
         if not(has_X_Real_IP) and ping.is_ip_in_range(self.sh.const.ip, data['source-ip']):
             if 'get_plugins' in data['data']['cmd']:
                 out['data'] = {'plugins': [{'label':'System', 'name':'system'}]}
+                for name in self.sh.plugins.plugins:
+                    cfg = config.load(self.sh, name + '/properties' , path='plugins')
+                    if 'backend_web' in cfg.data:
+                        out['data']['plugins'].append({'label':cfg.data['friendly'], 'name':name})
             elif 'system' in data['data']['cmd']:
                 out['data'] = system.call(self.sh, out)
             else:
