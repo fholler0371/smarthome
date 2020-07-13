@@ -5,6 +5,7 @@ import subprocess
 from threading import Thread
 import psutil
 import bin.config as config
+import bin.log as log
 
 class systemUpgradeThread(Thread):
     def __init__(self, log):
@@ -61,7 +62,23 @@ def call(sh, data):
         return get_plugins(sh)
     elif 'client_set_plugins' == data['data']['cmd']:
         return set_plugins(sh, data['data'])
+    elif 'client_get_logs' == data['data']['cmd']:
+        return get_logs(sh)
     return data['data']
+
+def get_logs(sh):
+    try:
+        f = open(log.file_name, 'r+')
+        lines = f.read().split('\n')
+        f.close()
+        lenarray = len(lines) - 2
+        out = []
+        while lenarray > -1:
+            out.append(lines[lenarray])
+            lenarray -= 1
+        return '<br>'.join(out)
+    except:
+        return ''
 
 def set_plugins(sh, data):
     if data['value']:

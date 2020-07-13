@@ -120,9 +120,10 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
         })
       }
       calltab3 = function() {
-        window.smcall({cmd:'client_system_logs'}, function(data) {
+        window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_logs'}}, function(data) {
+          console.log(data)
           $('#system_log').jqxPanel('clearcontent')
-          $('#system_log').jqxPanel('append', data.log)
+          $('#system_log').jqxPanel('append', data.data)
         })
       }
       $('#system_tabs').on('selected', function (event) {

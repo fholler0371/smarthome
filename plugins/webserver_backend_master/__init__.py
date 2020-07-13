@@ -110,7 +110,6 @@ class plugin(plugins.base):
 
     def api(self, data_in):
         data = data_in['data']
-        print(data)
         if 'client' in data:
             if 'master' == data['client']:
                 if 'get_salt' == data['cmd']:
@@ -169,7 +168,6 @@ class plugin(plugins.base):
         return data_in['data']
 
     def client_api(self, data):
-        print(data)
         out = data['data']
         has_X_Real_IP = False
         for line in data['headers']:
@@ -181,5 +179,5 @@ class plugin(plugins.base):
             elif 'system' in data['data']['cmd']:
                 out['data'] = system.call(self.sh, out)
             else:
-                print('data')
+                print(data)
         return out['data']
