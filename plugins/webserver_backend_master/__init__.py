@@ -26,6 +26,7 @@ import plugins
 import bin.ping as ping
 import plugins.webserver_backend_master.auth as auth
 import plugins.webserver_backend_master.server as server
+import plugins.webserver_backend_master.system as system
 
 class scanThread(Thread):
     def __init__(self, log, net, pl, client_port):
@@ -148,7 +149,7 @@ class plugin(plugins.base):
                     if 'sm_backend' == data['client'] and 'sm_backend' in out['token']['packages']:
                         if 'scan' == data['cmd']:
                             self._scan_hosts()
-                        elif 'get_plugins' == data['cmd']:
+                        else:
                             if 'ip' in data['data']:
                                 jdata = json.dumps(out).encode()
                                 with urllib.request.urlopen('http://' + data['data']['ip'] + ':' + str(self.cfg['port']) + '/client-api', jdata) as f:
@@ -162,12 +163,10 @@ class plugin(plugins.base):
             if 'client' in out:
                 del out['client']
             return out
-        elif data['cmd'] == 'get_scan_state':
-            return {'scan_state': self.scanning}
-        elif data['cmd'] == 'get_remote_hosts':
-            return {'hosts': self.cfg['hosts']}
-        elif data['cmd'].startswith('client'):
-            return self.getClientAPI(data)
+        else:
+            print('>>>> ERROR')
+            print(data_in)
+            return {}
         return data_in['data']
 
     def client_api(self, data):
@@ -180,5 +179,8 @@ class plugin(plugins.base):
         if not(has_X_Real_IP) and ping.is_ip_in_range(self.sh.const.ip, data['source-ip']):
             if 'get_plugins' in data['data']['cmd']:
                 out['data'] = {'plugins': [{'label':'System', 'name':'system'}]}
-            print('Do Something')
+            elif 'system' in data['data']['cmd']:
+                out['data'] = system.call(self.sh, out)
+            else:
+                print('data')
         return out['data']

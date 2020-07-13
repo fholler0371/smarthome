@@ -65,13 +65,14 @@ class webserverHandler(BaseHTTPRequestHandler):
 #        print(self.headers)
         content_len = int(self.headers['Content-Length'])
         if '/api' == self.path:
-            data = json.dumps(self.api({'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+            ret = self.api({'data':json.loads(self.rfile.read(content_len).decode())})
         elif '/client-api' == self.path:
-            data = json.dumps(self.capi({'source-ip': self.client_address[0],
-                                         'headers': str(self.headers).split('\n'),
-                                         'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+            ret = self.capi({'source-ip': self.client_address[0],
+                             'headers': str(self.headers).split('\n'),
+                             'data':json.loads(self.rfile.read(content_len).decode())})
         else:
-            data = json.dumps({}).encode()
+            ret = {}
+        data = json.dumps(ret).encode()
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         size = len(data)

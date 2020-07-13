@@ -24,13 +24,13 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $("#system_long").jqxInput({placeHolder: "Longitude", height: 40, width: 250});
       $('#system_send').jqxButton({width: 250, height: 40}).css('margin', '10px')
       $("#system_master").jqxCheckBox({ width: 120, height: 25});
-      $('#system_send').on('click', function() {
+/*      $('#system_send').on('click', function() {
         $("#host_name").html("Server: "+$('#system_name').val())
         window.smcall({cmd:'client_system_set_var', 'master': $("#system_master").jqxCheckBox('val'),
             'friendly_name': $('#system_name').val(),
             'geo': {'lat': $('#system_lat').val(), 'long': $('#system_long').val()}}, function() {})
       })
-      $('#sytem_tool > input').on('click', function(event) {
+*/      $('#sytem_tool > input').on('click', function(event) {
         var id = $(event.currentTarget).attr('id')
         if (id == 1) {
           window.smcall({cmd:'client_system_update'}, function() {})
@@ -46,6 +46,7 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       })
       calltab0 = function() {
         window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_state'}}, function(data) {
+          var data = data.data
           html = '<table id="state_table"><thead><tr><th  align="left">Name</th><th align="left">Wert</th></tr></thead><tbody>'
           html += '<tr><td>Typ</td><td>' + data.type + '</td></tr>'
           html += '<tr><td>Serien Nr.</td><td>' + data.serial + '</td></tr>'
@@ -56,6 +57,7 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
           html += '<tr><td>Festplatte</td><td>' + data.disk + '</td></tr>'
           html += '<tr><td>Laufzeit</td><td>' + data.uptime + '</td></tr>'
           html += '<tr><td>SmartHome Up</td><td>' + data.shtime + '</td></tr>'
+          html += '<tr><td>System Last</td><td>' + data.last + '</td></tr>'
           html += '<tr><td>SmartHome Version</td><td>' + data.version + '</td></tr>'
           html += '<tr><td>Temperature</td><td>' + data.temp + '</td></tr>'
           html += '<tr><td>Kernal-Version</td><td>' + data.kernalversion + '</td></tr>'
@@ -134,12 +136,12 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $("#system_log").jqxPanel({ width: '100%', height: '100%'});
       $("#system_log").parent().css('overflow', 'hidden')
       calltab0()
-      window.smcall({cmd:'client_system_get_var'}, function(data) {
+/*      window.smcall({cmd:'client_system_get_var'}, function(data) {
         $("#system_master").jqxCheckBox('val', data.master)
         $('#system_name').val(data.friendly_name)
         $('#system_lat').val(data.geo.lat)
         $('#system_long').val(data.geo.long)
       })
-    }
+*/    }
   }
 })
