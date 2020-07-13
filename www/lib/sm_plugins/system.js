@@ -34,15 +34,13 @@ define(['jquery', 'jqxdatatable', 'jqxinput', 'jqxtabs', 'jqxdata', 'jqxgrid', '
       $('#sytem_tool > input').on('click', function(event) {
         var id = $(event.currentTarget).attr('id')
         if (id == 1) {
-          window.smcall({cmd:'client_system_update'}, function() {})
+          window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_update'}}, function(data) {})
         } else if (id == 2) {
-          window.smcall({cmd:'client_system_reboot'}, function() {})
+          window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_reboot'}}, function(data) {})
         } else if (id == 3) {
-          window.smcall({cmd:'client_system_restart'}, function() {})
+          window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_restart'}}, function(data) {})
         } else if (id == 4) {
-          window.smcall({cmd:'client_system_install'}, function() {})
-        } else {
-          console.log($(event.currentTarget).attr('id'))
+          window.smcall({'client': 'sm_backend', 'cmd':'system', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_install'}}, function(data) {})
         }
       })
       calltab0 = function() {

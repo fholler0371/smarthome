@@ -2,18 +2,80 @@ import os
 import sys
 import time
 import subprocess
+from threading import Thread
 import psutil
 
+class systemUpgradeThread(Thread):
+    def __init__(self, log):
+        Thread.__init__(self)
+        self.log = log
+
+    def run(self):
+        self.log.info('System Update Start')
+        responce = subprocess.Popen(('sudo apt-get update').split(' '), stdout=subprocess.PIPE).stdout.read()
+        self.log.info('System Update Stop')
+        self.log.info('System Upgrade Start')
+        responce = subprocess.Popen(('sudo apt-get upgrade -y').split(' '), stdout=subprocess.PIPE).stdout.read()
+        self.log.info('System Upgrade Stop')
+
+class systemRebootThread(Thread):
+    def __init__(self, log):
+        Thread.__init__(self)
+        self.log = log
+
+    def run(self):
+        self.log.info('System Reboot')
+        responce = subprocess.Popen(('sudo reboot').split(' '), stdout=subprocess.PIPE).stdout.read()
+
+class systemInstallThread(Thread):
+    def __init__(self, log, sh):
+        Thread.__init__(self)
+        self.log = log
+        self.sh = sh
+
+    def run(self):
+        self.log.info('System Install')
+        name = self.sh.basepath + '/tmp/install_it.sh'
+        f = open(name, 'w')
+        f.write('wget -q -O - https://raw.githubusercontent.com/fholler0371/smarthome/master/install.sh | bash')
+        f.close()
+        response = subprocess.Popen(('bash ' + name).split(' '), stdout=subprocess.PIPE).stdout.read()
+        out = response.decode(errors= 'backslashreplace')
+        os.remove(name)
+
 def call(sh, data):
-    print("System Call")
     if 'client_get_state' == data['data']['cmd']:
         return get_state(sh)
     elif 'client_get_var' == data['data']['cmd']:
         return get_var(sh)
-    elif 'client_set_var' == data['data']['cmd']:
-        return set_var(sh, data['data'])
-    print(data['data'])
+    elif 'client_update' == data['data']['cmd']:
+        return set_update(sh)
+    elif 'client_reboot' == data['data']['cmd']:
+        return set_reboot(sh)
+    elif 'client_restart' == data['data']['cmd']:
+        return set_restart(sh)
+    elif 'client_install' == data['data']['cmd']:
+        return set_install(sh)
     return data['data']
+
+def set_reboot(sh):
+    th = systemInstallThread(sh.log)
+    th.start()
+    return {}
+
+def set_restart(sh):
+    sh.running = False
+    return {}
+
+def set_reboot(sh):
+    th = systemRebootThread(sh.log)
+    th.start()
+    return {}
+
+def set_update(sh):
+    th = systemUpgradeThread(sh.log)
+    th.start()
+    return {}
 
 def set_var(sh, data):
     sh.const.geo = data['geo']
