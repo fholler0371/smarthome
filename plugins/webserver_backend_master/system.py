@@ -50,6 +50,8 @@ def call(sh, data):
         return get_state(sh)
     elif 'client_get_var' == data['data']['cmd']:
         return get_var(sh)
+    elif 'client_set_var' == data['data']['cmd']:
+        return set_var(sh, data['data'])
     elif 'client_update' == data['data']['cmd']:
         return set_update(sh)
     elif 'client_reboot' == data['data']['cmd']:

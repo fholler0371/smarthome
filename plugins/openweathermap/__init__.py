@@ -4,6 +4,8 @@ import json
 import plugins
 import bin.sensor as sensor_base
 
+import plugins.openweathermap.web as web
+
 class plugin(plugins.base):
     def __init__(self, sh, name):
         plugins.base.__init__(self, sh, name)
@@ -91,8 +93,8 @@ class plugin(plugins.base):
         self.sh.cfg.save()
 
     def sm_backend(self, data):
-        print(data)
+        data = web.sm_backend(self.sh, self, data)
 #cmd = data['cmd'].split('.')[2] return data['data'] if cmd == "get_config": return {'api': self.cfg['api'], 'intervall': self.cfg['intervall']} 
 #        elif cmd == "set_config":
 #           self._set_config(data) return {} else: print(cmd)
-        return data['data']
+        return data

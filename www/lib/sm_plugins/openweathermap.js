@@ -6,13 +6,15 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', '
       html += '<div id="openweathermap_konfig"></div>'
       html += '<div id="sytem_tool"></div><div><div id="system_plugins"></div></div><div><div id="system_log"></div></div></div>'
       $('#sm_backend_content').html(html)
-      html = '<table><tr><td><b>API-Key:</b></td><td><input type="text" id="openweatherapi_apikey"/>'
-      html += '</td></tr><tr><td><b>Timer:</b></td><td><div id="openweatherapi_intervall"></div></td></tr>'
+      html = '<table><tr><td><b>Name:</b></td><td><input type="text" id="openweathermap_name"/></td></tr>'
+      html += '<tr><td><b>API-Key:</b></td><td><input type="text" id="openweathermap_apikey"/>'
+      html += '</td></tr><tr><td><b>Timer:</b></td><td><div id="openweathermap_intervall"></div></td></tr>'
       html += '<tr><td style="height:40px;"> </td</tr><tr><td></td><td>'
       $('#openweathermap_konfig').html(html + '<input type="button" value="Senden" id="openweathermap_send" /></td></tr></table>')
       $('#openweathermap_konfig').css('margin', '10px')
-      $("#openweatherapi_apikey").jqxInput({placeHolder: "API-Key", height: 40, width: 250});
-      $("#openweatherapi_intervall").jqxNumberInput({
+      $("#openweathermap_name").jqxInput({placeHolder: "Pluginname", height: 40, width: 250});
+      $("#openweathermap_apikey").jqxInput({placeHolder: "API-Key", height: 40, width: 250});
+      $("#openweathermap_intervall").jqxNumberInput({
         height: 40,
         width: 250,
         decimalDigits: 0,
@@ -24,8 +26,8 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', '
       $('#openweathermap_send').jqxButton({width: 250, height: 40}).css('margin', '10px')
       $('#openweathermap_send').on('click', function(event) {
         var cmd = {'cmd': 'client.openweathermap.set_config',
-                   'api': $('#openweatherapi_apikey').val(),
-                   'intervall': $('#openweatherapi_intervall').val()
+                   'api': $('#openweathermap_apikey').val(),
+                   'intervall': $('#openweathermap_intervall').val()
                   }
         window.smcall(cmd, function(){})
       })
@@ -51,8 +53,10 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', '
       })
       calltab0 = function() {
         window.smcall({'client': 'sm_backend', 'cmd':'openweathermap', 'data': {'ip':window.module.sm_backend.ip, cmd:'client_get_var'}}, function(data) {
-          $('#openweatherapi_apikey').val(data.api)
-          $('#openweatherapi_intervall').val(data.intervall)
+          var data = data.data
+          $('#openweathermap_name').val(data.friendly_name)
+          $('#openweathermap_apikey').val(data.api)
+          $('#openweathermap_intervall').val(data.intervall)
         })
       }
       calltab2 = function() {
