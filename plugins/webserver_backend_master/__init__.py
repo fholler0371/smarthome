@@ -180,7 +180,10 @@ class plugin(plugins.base):
                 for name in self.sh.plugins.plugins:
                     cfg = config.load(self.sh, name + '/properties' , path='plugins')
                     if 'backend_web' in cfg.data:
-                        out['data']['plugins'].append({'label':cfg.data['friendly'], 'name':name})
+                        if 'friendly_name' in self.sh.plugins.plugins[name].cfg:
+                            out['data']['plugins'].append({'label':self.sh.plugins.plugins[name].cfg['friendly_name'], 'name':name})
+                        else:
+                            out['data']['plugins'].append({'label':cfg.data['friendly'], 'name':name})
             elif 'system' in data['data']['cmd']:
                 out['data'] = system.call(self.sh, out)
             else:
