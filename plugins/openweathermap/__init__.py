@@ -5,6 +5,7 @@ import plugins
 import bin.sensor as sensor_base
 
 import plugins.openweathermap.web as web
+import plugins.openweathermap.sensor as sensor
 
 class plugin(plugins.base):
     def __init__(self, sh, name):
@@ -24,6 +25,7 @@ class plugin(plugins.base):
         self.sensors = {}
 
     def run(self):
+        sensor.load(self)
         self.timer = self.lib['timer'].start(self.cfg['intervall'], self.job)
 
     def job(self):
@@ -36,45 +38,25 @@ class plugin(plugins.base):
                     data = json.loads(r.content.decode())
                     for element in data['current']:
                         if element != 'dt' and element != 'weather' and element != 'rain':
-                             if not (element in self.sensors):
-                                 self.sensors[element] = sensor_base.sensor()
-                             self.sensors[element].val(element, data['current'][element], data['current']['dt'])
+                             sensor.new_value(element, data['current'][element], data['current']['dt'])
                     for element in data['current']['weather'][0]:
-                        name = 'weather_'+element
-                        if not (name in self.sensors):
-                            self.sensors[name] = sensor_base.sensor()
-                        self.sensors[name].val(name, data['current']['weather'][0][element], data['current']['dt'])
+                        sensor.new_value('weather_'+element, data['current']['weather'][0][element], data['current']['dt'])
                     if 'rain' in data['current']:
                         for element in data['current']['rain']:
-                            name = 'rain_'+element
-                            if not (name in self.sensors):
-                                self.sensors[name] = sensor_base.sensor()
-                            self.sensors[name].val(name, data['current']['rain'][element], data['current']['dt'])
+                            sensor.new_value('rain_'+element, data['current']['rain'][element], data['current']['dt'])
                     lenarr = len(data['daily'])
                     l = 0
                     while l < lenarr:
                         daily = data['daily'][l]
                         for element in daily:
                             if element != 'dt' and element != 'temp' and element != 'feels_like' and element != 'weather':
-                                name = 'daily_' + str(l) + '_' + element
-                                if not (name in self.sensors):
-                                    self.sensors[name] = sensor_base.sensor()
-                                self.sensors[name].val(name, data['daily'][l][element], data['daily'][l]['dt'])
+                                sensor.new_value('daily_' + str(l) + '_' + element, data['daily'][l][element], data['daily'][l]['dt'])
                         for element in data['daily'][l]['temp']:
-                                name = 'daily_' + str(l) + '_temp_' + element
-                                if not (name in self.sensors):
-                                    self.sensors[name] = sensor_base.sensor()
-                                self.sensors[name].val(name, data['daily'][l]['temp'][element], data['daily'][l]['dt'])
+                            sensor.new_value('daily_' + str(l) + '_temp_' + element, data['daily'][l]['temp'][element], data['daily'][l]['dt'])
                         for element in data['daily'][l]['feels_like']:
-                                name = 'daily_' + str(l) + '_feels_like_' + element
-                                if not (name in self.sensors):
-                                    self.sensors[name] = sensor_base.sensor()
-                                self.sensors[name].val(name, data['daily'][l]['feels_like'][element], data['daily'][l]['dt'])
+                            sensor.new_value('daily_' + str(l) + '_feels_like_' + element, data['daily'][l]['feels_like'][element], data['daily'][l]['dt'])
                         for element in data['daily'][l]['weather'][0]:
-                                name = 'daily_' + str(l) + '_weather_' + element
-                                if not (name in self.sensors):
-                                    self.sensors[name] = sensor_base.sensor()
-                                self.sensors[name].val(name, data['daily'][l]['weather'][0][element], data['daily'][l]['dt'])
+                            sensor.new_value('daily_' + str(l) + '_weather_' + element, data['daily'][l]['weather'][0][element], data['daily'][l]['dt'])
                         l += 1
             except Exeception as e:
                 self.sh.log.error(str(e))
@@ -83,7 +65,7 @@ class plugin(plugins.base):
     def stop(self):
         if self.timer:
             self.timer.stop()
-
+        sensor.save(self)
 
     def _set_config(self, data):
         self.cfg['api'] = data['api']
