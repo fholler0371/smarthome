@@ -25,10 +25,11 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', /**/'jqxdatatable', 'jqxtabs', '
       })
       $('#openweathermap_send').jqxButton({width: 250, height: 40}).css('margin', '10px')
       $('#openweathermap_send').on('click', function(event) {
-        var cmd = {'cmd': 'client.openweathermap.set_config',
-                   'api': $('#openweathermap_apikey').val(),
-                   'intervall': $('#openweathermap_intervall').val()
-                  }
+        var cmd = {'client': 'sm_backend', 'cmd':'openweathermap', 'data': {'ip':window.module.sm_backend.ip,
+                                                                            cmd:'client_set_var',
+                                                                            'api': $('#openweathermap_apikey').val(),
+                                                                            'intervall': $('#openweathermap_intervall').val(),
+                                                                            'friendly_name': $('#openweathermap_name').val()}}
         window.smcall(cmd, function(){})
       })
       $('#openweathermap_tabs').jqxTabs({ width: '100%', height: '100%', position: 'top'})
