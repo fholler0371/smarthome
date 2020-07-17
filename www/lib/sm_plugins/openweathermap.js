@@ -1,5 +1,5 @@
 define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs', 'jqxgrid_selection', 'jqxcheckbox',
-    'jqxgrid_edit', 'jqxpanel', 'jqxgrid_columnsresize'],
+    'jqxgrid_edit', 'jqxpanel', 'jqxgrid_columnsresize', 'jqxcombobox'],
     function($) {
   openweathermap = {
     func : function() {
@@ -53,7 +53,12 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
               { name: 'friendly_name', type: 'string' },
               { name: 'value', type: 'string' },
               { name: 'unit', type: 'string' },
-              { name: 'type', type: 'string' }
+              { name: 'type', type: 'string' },
+              { name: 'has_default', type: 'bool'},
+              { name: 'default', type: 'string' },
+              { name: 'seen', type: 'bool'},
+              { name: 'send', type: 'bool'},
+              { name: 'var_type', type: 'str'}
             ]}
           var dataAdapter = new $.jqx.dataAdapter(source)
           $("#openweathermap_sensor").jqxGrid({
@@ -61,13 +66,38 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
             height: '100%',
             source: dataAdapter,
             columnsresize: true,
+            editable: true,
             columns: [
-              { text: 'Name', datafield: 'name'},
+              { text: 'Name', datafield: 'name', editable: false},
               { text: 'Bezeichnung', datafield: 'friendly_name'},
-              { text: 'Wert', datafield: 'value'},
-              { text: 'Einheit', datafield: 'unit'},
-              { text: 'Typ', datafield: 'type'}
+              { text: 'Wert', datafield: 'value', editable: false},
+              { text: 'Einheit', datafield: 'unit', columntype: 'combobox',
+                createeditor: function (row, column, editor) {
+                  editor.jqxComboBox({ autoDropDownHeight: true, source: data.data.units, promptText: "Einheit festlegen:" });
+                }
+              },
+              { text: 'Typ', datafield: 'type', columntype: 'combobox',
+                createeditor: function (row, column, editor) {
+                  editor.jqxComboBox({ autoDropDownHeight: true, source: data.data.types, promptText: "Typ festlegen:" });
+                }
+              },
+              { text: 'Datentyp', datafield: 'var_type', columntype: 'combobox',
+                createeditor: function (row, column, editor) {
+                  editor.jqxComboBox({ autoDropDownHeight: true, source: ['Int', 'Float'], promptText: "Typ festlegen:" });
+                }
+              },
+              { text: 'hat Standart', datafield: 'has_value', columntype: 'checkbox'},
+              { text: 'Standart', datafield: 'default'},
+              { text: 'gesehen', datafield: 'seen', columntype: 'checkbox'},
+              { text: 'senden', datafield: 'send', columntype: 'checkbox'}
             ]
+          })
+          $("#openweathermap_sensor").off('cellendedit')
+          $("#openweathermap_sensor").on('cellendedit', function (event) {
+            var row = event.args.row
+            row[event.args.datafield] = event.args.value
+            window.smcall({'client': 'sm_backend', 'cmd':'openweathermap', 'data': {'ip':window.module.sm_backend.ip,
+                                                                                     cmd:'client_set_sensor', 'row': row}}, function() {})
           })
         })
       }

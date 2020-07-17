@@ -12,6 +12,18 @@ def new_value(name, value, last):
         known_sensors[name]['value'] = value
 #    print(name, value, last)
 
+def set_row(data):
+    global known_sensors
+    if data['name'] in known_sensors:
+        known_sensors[data['name']]['friendly_name'] = data['friendly_name']
+        known_sensors[data['name']]['seen'] = data['seen']
+        known_sensors[data['name']]['unit'] = data['unit']
+        known_sensors[data['name']]['type'] = data['type']
+        known_sensors[data['name']]['has_default'] = data['has_default']
+        known_sensors[data['name']]['type'] = data['type']
+        known_sensors[data['name']]['send'] = data['send']
+        known_sensors[data['name']]['var_type'] = data['var_type']
+
 def load(sh):
 #    try:
     if True:

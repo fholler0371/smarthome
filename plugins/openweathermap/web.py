@@ -6,16 +6,22 @@ def sm_backend(sh, plugin, data):
     elif 'client_set_var' == data['data']['cmd']:
         data['data'] = set_var(sh, plugin, data['data'])
     elif 'client_get_sensor' == data['data']['cmd']:
-        data['data'] = get_sensor()
+        data['data'] = get_sensor(sh)
+    elif 'client_set_sensor' == data['data']['cmd']:
+        data['data'] = set_sensor(sh, data['data'])
     return data['data']
 
-def get_sensor():
+def set_sensor(sh, data):
+    sensor.set_row(data['row'])
+    return {}
+
+def get_sensor(sh):
    out = []
    for name in sensor.known_sensors:
        data = sensor.known_sensors[name]
        data['name'] = name
        out.append(data)
-   return {'sensors': out}
+   return {'sensors': out, 'units': sh.const.units, 'types': sh.const.types}
 
 def set_var(sh, plugin, data):
    plugin.cfg['friendly_name'] = data['friendly_name']

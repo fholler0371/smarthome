@@ -22,7 +22,8 @@ requirejs.config({
         jqxnumberinput: 'jqwidgets/jqxnumberinput',
         jqxmenu: 'jqwidgets/jqxmenu',
         jqxwindow: 'jqwidgets/jqxwindow',
-        jqxgrid_columnsresize: 'jqwidgets/jqxgrid.columnsresize'
+        jqxgrid_columnsresize: 'jqwidgets/jqxgrid.columnsresize',
+        jqxcombobox: 'jqwidgets/jqxcombobox'
     },
     shim:{
         jqxcore : {

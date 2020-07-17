@@ -57,3 +57,6 @@ class basic():
         self.friendly_name = os.uname()[1]
 
         self.aes_key = ''
+
+        self.units = ['Grad C', 'hPa', 'utc']
+        self.types = ['Druck', 'Temperatur', 'Zeit']
