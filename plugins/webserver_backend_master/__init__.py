@@ -24,6 +24,10 @@ import urllib.request
 
 import plugins
 import bin.ping as ping
+import bin.config as config
+import plugins.webserver_backend_master.auth as auth
+import plugins.webserver_backend_master.server as server
+import plugins.webserver_backend_master.system as system
 
 class scanThread(Thread):
     def __init__(self, log, net, pl, client_port):
@@ -69,7 +73,7 @@ class plugin(plugins.base):
         self.create_config(val)
 
         ''' setzten und pruefen der Abhaengigkeiten '''
-        self.require = ['webserver']
+        self.require = ['net_broadcast']
         self.get_requirements()
 
         ''' wenn alles Ok Plugin registrieren '''
@@ -83,42 +87,111 @@ class plugin(plugins.base):
     def run(self):
         ''' starten des Plugins '''
         self.sh.log.info('run')
-        if self.loaded:
-            self.server = self.lib['webserver'].webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api)
+        self.main_server = server.server(self.sh)
+        self.main_server.webserver_run(self.cfg['port'], self.cfg['path'], self.cfg['lib'], self.api, self.client_api)
 
     def stop(self):
         ''' stopen des des Plugins zum Ende des Programms '''
-        if self.server:
-            self.lib['webserver'].webserver_stop(self.server, self.cfg['port'])
+        if self.main_server:
+            self.main_server.webserver_stop()
 
     def _scan_hosts(self):
-        if not('network' in self.cfg):
-            net = ping.guess_network()
-            if net != '':
-                self.cfg['network'] = net
-                self.sh.cfg.data['plugins'][self.name]['network'] = net
-                self.sh.cfg.save()
-        if 'network' in self.cfg:
-            th = scanThread(self.sh.log, self.cfg['network'], self, self.cfg['client_port'])
-            th.start()
-            self.scanning = True
-
-    def getClientAPI(self, data):
-        jdata = json.dumps(data).encode()
-        out = {}
-        with urllib.request.urlopen('http://' + data['client'] + ':' + str(self.cfg['client_port']) + '/api', jdata) as f:
-            out = json.loads(f.read().decode())
-        return out
+        hosts = self.lib['net_broadcast'].scan()
+        data = json.dumps({'client': 'master', 'cmd':'get'}).encode()
+        server = []
+        for host in hosts:
+            try:
+                with urllib.request.urlopen('http://' + host['ip'] + ':' + str(self.cfg['port']) + '/api', data) as f:
+                     server.append(host)
+            except:
+                pass
+        self.cfg['hosts'] = server
+        self.sh.cfg.data['hosts'] = server
+        self.sh.cfg.save()
 
     def api(self, data_in):
         data = data_in['data']
-        if data['cmd'] == 'scan_clients':
-            self._scan_hosts()
-            return {'scan_state': self.scanning}
-        elif data['cmd'] == 'get_scan_state':
-            return {'scan_state': self.scanning}
-        elif data['cmd'] == 'get_remote_hosts':
-            return {'hosts': self.cfg['hosts']}
-        elif data['cmd'].startswith('client'):
-            return self.getClientAPI(data)
+        if 'client' in data:
+            if 'master' == data['client']:
+                if 'get_salt' == data['cmd']:
+                    out = auth.getSalt(self.sh, data)
+                elif 'get' == data['cmd']:
+                    out = {'login': False}
+                elif 'keep_alive' == data['cmd']:
+                    out = auth.decode(self.sh, data)
+                    if out['login']:
+                        out = auth.encode(self.sh, out)
+                elif 'get_menu' == data['cmd']:
+                    out = auth.decode(self.sh, data)
+                    out['data'] = []
+                    if out['login']:
+                        if 'sm_backend' in out['token']['packages']:
+                            if self.sh.const.master:
+                                if len(self.cfg['hosts']) > 0:
+                                    inner = []
+                                    for host in self.cfg['hosts']:
+                                        inner.append({'label': host['friendly_name'], 'mod': 'sm_backend', 'p1':'client', 'p2':host['ip'],
+                                                                                                           'p3': host['friendly_name']})
+                                    out['data'].append({'label': 'Backends', 'sub': inner})
+                                out['data'].append({'label': 'Smarthome - Backend Scan', 'mod': 'sm_backend', 'p1':'scan', 'display':False})
+                            else:
+                                out['data'].append({'label': 'Backend', 'mod': 'sm_backend', 'p1':'client', 'p2':self.sh.const.ip.split('/')[0],
+                                                                                                            'p3':self.sh.const.friendly_name})
+                        out = auth.encode(self.sh, out)
+                elif 'get_server' == data['cmd']:
+                    return {'name': self.sh.const.server_name, 'friendly_name': self.sh.const.friendly_name, 'master': self.sh.const.master}
+                elif 'get_clients' == data['cmd']:
+                    return  self.cfg['hosts']
+            else:
+                out = auth.decode(self.sh, data)
+                if out['login']:
+                    if 'sm_backend' == data['client'] and 'sm_backend' in out['token']['packages']:
+                        if 'scan' == data['cmd']:
+                            self._scan_hosts()
+                        else:
+                            if 'ip' in data['data']:
+                                jdata = json.dumps(out).encode()
+                                with urllib.request.urlopen('http://' + data['data']['ip'] + ':' + str(self.cfg['port']) + '/client-api', jdata) as f:
+                                    out['data'] = json.loads(f.read().decode())
+                    out = auth.encode(self.sh, out)
+            if not out['login']:
+                if 'token' in out:
+                    del out['token']
+            if 'cmd' in out:
+                del out['cmd']
+            if 'client' in out:
+                del out['client']
+            return out
+        else:
+            print('>>>> ERROR')
+            print(data_in)
+            return {}
         return data_in['data']
+
+    def client_api(self, data):
+        out = data['data']
+        has_X_Real_IP = False
+        for line in data['headers']:
+            if line.startswith('X-Real-IP'):
+                has_X_Real_IP = True
+        if not(has_X_Real_IP) and ping.is_ip_in_range(self.sh.const.ip, data['source-ip']):
+            if 'get_plugins' in data['data']['cmd']:
+                out['data'] = {'plugins': [{'label':'System', 'name':'system'}]}
+                for name in self.sh.plugins.plugins:
+                    cfg = config.load(self.sh, name + '/properties' , path='plugins')
+                    if 'backend_web' in cfg.data:
+                        if 'friendly_name' in self.sh.plugins.plugins[name].cfg:
+                            out['data']['plugins'].append({'label':self.sh.plugins.plugins[name].cfg['friendly_name'], 'name':name})
+                        else:
+                            out['data']['plugins'].append({'label':cfg.data['friendly'], 'name':name})
+            elif 'system' in data['data']['cmd']:
+                out['data'] = system.call(self.sh, out)
+            else:
+                if data['data']['cmd'] in self.sh.plugins.plugins:
+                    if hasattr(self.sh.plugins.plugins[data['data']['cmd']], 'sm_backend'):
+                        out['data'] = self.sh.plugins.plugins[data['data']['cmd']].sm_backend(out)
+                    else:
+                        print('missing function')
+                else:
+                    print('plugin not found')
+        return out['data']

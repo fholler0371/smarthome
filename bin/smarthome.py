@@ -66,6 +66,13 @@ class smarthome:
         cfg_file = self.const.name if self.const.is_service else self.const.name + '.cmd'
         self.cfg = config.load(self, cfg_file)
 
+        if 'geo' in self.cfg.data:
+            self.const.geo = self.cfg.data['geo']
+        if 'master' in self.cfg.data:
+            self.const.master = self.cfg.data['master']
+        if 'friendly_name' in self.cfg.data:
+            self.const.friendly_name = self.cfg.data['friendly_name']
+
         ''' Intialiesierung des Loggers '''
         self.log = logging.getLogger(self.basename)
 
@@ -91,8 +98,10 @@ class smarthome:
 
         ''' Load Module '''
         self.plugins = plugins.master(self)
-        self.plugins.load(self.cfg.data['plugins'])
-#        self.plugins.load(['webserver_backend_master', 'webserver_backend_client']) #temporär zum test
+        if len(self.cfg.data['plugins']) > 0:
+            self.plugins.load(self.cfg.data['plugins'])
+        else:
+            self.plugins.load(['webserver_backend_master']) #temporär zum test
         print(self.plugins.plugins)
 
     def run(self):

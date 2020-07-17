@@ -1,21 +1,106 @@
-.primColor {
-  background-color: #0288d1
+#mainTop {
+  height: 3.7rem;
+  width: 100%;
+  background-color: #0288d1;
+  color: #b0bec5;
+  position: fixed;
+  top: 0;
+  left: 0
 }
-
-.mainHeader {
-  height: 60px
-}
-
 .leftMenu {
-  width: 250px;
-  float: left
+  width: 18rem;
+}
+.leftMenuSmall > .leftMenu {
+  width: 4.75rem;
+}
+#slogan {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.25rem;
+  position: relative;
+  top: 0.31rem;
+  left: 3.5rem
+}
+#menuSmall {
+  float: right;
+  position: relative;
+  top: 0.875rem
+}
+#loginButton, #logoutButton {
+  top: 0.625rem;
+  right: 0.625rem;
+}
+#burgerMenu {
+  top: 0.4375rem;
+  left: 0.625rem;
+}
+#head_title {
+  position: absolute;
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.25rem;
+  left: 22rem;
+  top: 0.31rem;
+}
+#user_name {
+  position: absolute;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.75rem;
+  right: 4rem;
+  top: 0.9rem;
+}
+.leftMenuSmall > #head_title {
+  left: 7rem;
+}
+#client_area {
+   position: fixed;
+   top: 3.7rem;
+   width: 100%;
+   min-height: calc( 100% - 3.7rem );
 }
 
-.rightPart {
-  width: calc(100% - 250px);
-  float: right
+/* Clock */
+#mod_clock_outer {
+  height: 257px;
+  width: 600px;
+  position: absolute;
+  left: calc( ( 100% - 600px ) / 2);
+  top: calc( ( 100% - 250px ) / 2);
 }
-
-.mainArea {
-  height: calc(100% - 60px)
+.mod_clock_circle {
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  top:0;
+}
+#mod_clock_hour {
+  left: 0;
+}
+#mod_clock_minute {
+  left: 200px;
+}
+#mod_clock_second {
+  left: 400px;
+}
+.mod_clock_number {
+  position: absolute;
+  top: 41px;
+  right: 49px;
+  font-family: 'Fredoka One', cursive;
+  font-weight: 600;
+  font-size: 90px;
+}
+.mod_clock_text {
+    font-family: 'Fredoka One', cursive;
+    font-weight: 600;
+    font-size: 35px;
+    position: absolute;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    left: 0;
+}
+#mod_clock_date {
+    top: 200px;
+}
+#mod_clock_week {
+    top: 260px;
 }

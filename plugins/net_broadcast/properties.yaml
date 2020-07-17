@@ -1,0 +1,3 @@
+background: True
+friendly: UDP-Broadcast Service
+description: Plugin zum finden anderer Server im selben Netz

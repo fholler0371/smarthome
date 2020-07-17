@@ -1,0 +1,14 @@
+#sm_backend_menu {
+  height: 100%;
+  width: 18rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#sm_backend_content {
+  height: 100%;
+  width: calc( 100% - 18rem );
+  position: absolute;
+  top: 0;
+  left: 18rem;
+}
