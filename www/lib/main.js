@@ -2,6 +2,7 @@ requirejs.config({
     baseUrl: '/lib',
     paths: {
         jquery: 'jquery/jquery-3.5.1.min',
+        datepicker: 'jquery/datepicker',
         jqxcore: 'jqwidgets/jqxcore',
         jqxsplitter: 'jqwidgets/jqxsplitter',
         jqxbutton: 'jqwidgets/jqxbuttons',
@@ -15,7 +16,14 @@ requirejs.config({
         jqxgrid_selection: 'jqwidgets/jqxgrid.selection',
         jqxgrid_edit: 'jqwidgets/jqxgrid.edit',
         jqxcheckbox: 'jqwidgets/jqxcheckbox',
-        jqxpanel: 'jqwidgets/jqxpanel'
+        jqxpanel: 'jqwidgets/jqxpanel',
+        jqxinput: 'jqwidgets/jqxinput',
+        jqxpasswordinput: 'jqwidgets/jqxpasswordinput',
+        jqxnumberinput: 'jqwidgets/jqxnumberinput',
+        jqxmenu: 'jqwidgets/jqxmenu',
+        jqxwindow: 'jqwidgets/jqxwindow',
+        jqxgrid_columnsresize: 'jqwidgets/jqxgrid.columnsresize',
+        jqxcombobox: 'jqwidgets/jqxcombobox'
     },
     shim:{
         jqxcore : {
@@ -28,6 +36,9 @@ requirejs.config({
             deps : ['jqxgrid']
           },
         jqxgrid_edit : {
+            deps : ['jqxgrid']
+          },
+        jqxgrid_columnsresize : {
             deps : ['jqxgrid']
           },
         jqxtabs : {
@@ -62,6 +73,10 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
     if (('server' in window) && ('ip' in window.server)) {
       data.client = window.server.ip
     }
+    token = sessionStorage.getItem("token")
+    if (token != null) {
+      data.token = token
+    }
     $.ajax({
       url: '/api',
       context: cb,
@@ -70,9 +85,18 @@ requirejs(['jquery', '/start.js', 'jqxcore'], function($, mod) {
       data: JSON.stringify(data),
       dataType: 'json'
     }).done(function(data) {
+      if (!data.login) {
+        sessionStorage.removeItem("token")
+        try {
+          window.head.logout()
+        } catch(err) {}
+      } else {
+        sessionStorage.setItem("token", data.token)
+      }
       this(data)
     })
   }
-  $.jqx.theme = 'metrodark';
+//  $.jqx.theme = 'metrodark';
+  $.jqx.theme = 'custom-scheme';
   mod.start()
 })

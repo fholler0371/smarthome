@@ -21,8 +21,6 @@ from socketserver import ThreadingMixIn
 from functools import partial
 import urllib.request
 
-import plugins
-
 class last_call(Thread):
     ''' Classe zum senden des Last-Call '''
     def __init(self, url):
@@ -41,7 +39,7 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 class webserverHandler(BaseHTTPRequestHandler):
     ''' Handler fuer Anfragen von den Browsern '''
-    def __init__(self, sh, path, lib, api, *args, **kwargs):
+    def __init__(self, sh, path, lib, api, capi, *args, **kwargs):
         ''' Initialiesierung der Klasse
         Param:
             sh: smarthome Object
@@ -53,6 +51,7 @@ class webserverHandler(BaseHTTPRequestHandler):
         self.root_path = path
         self.root_lib = lib
         self.api = api
+        self.capi = capi
         super().__init__(*args, **kwargs)
 
     def log_message(self, format, *args):
@@ -60,8 +59,20 @@ class webserverHandler(BaseHTTPRequestHandler):
         self.sh.log.info("%s - - [%s] %s" % (self.address_string(), self.log_date_time_string(),format%args))
 
     def do_POST(self):
+        self.sh.log.info('call from '+self.client_address[0])
+#        print(self.path)
+#        print(self.client_address)
+#        print(self.headers)
         content_len = int(self.headers['Content-Length'])
-        data = json.dumps(self.api({'data':json.loads(self.rfile.read(content_len).decode())})).encode()
+        if '/api' == self.path:
+            ret = self.api({'data':json.loads(self.rfile.read(content_len).decode())})
+        elif '/client-api' == self.path:
+            ret = self.capi({'source-ip': self.client_address[0],
+                             'headers': str(self.headers).split('\n'),
+                             'data':json.loads(self.rfile.read(content_len).decode())})
+        else:
+            ret = {}
+        data = json.dumps(ret).encode()
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         size = len(data)
@@ -85,7 +96,7 @@ class webserverHandler(BaseHTTPRequestHandler):
             path = self.sh.const.path + '/' + self.root_path + '/' + path[1:]
 
         ''' Blockieren des Hochwanderns in der Verzeichnisstruktur'''
-        path = path.replace('/./', '/').replace('/../', '/').replace('//', '/')
+        path = path.replace('/./', '/').replace('/../', '/').replace('//', '/').replace('/.', '/')
 
         ''' senden der Dateien '''
         if not os.path.exists(path):
@@ -129,18 +140,13 @@ class loopThread(Thread):
     def run(self):
         self.server.serve_forever()
 
-class plugin(plugins.base):
-    ''' Klasse des Plugins ohne weitere Funktion stellt nur den Call
-     zum erstellen und beenden des Servers bereit '''
-
-    def __init__(self, sh, name):
+class server:
+    def __init__(self, sh):
         ''' Standard init des Plugins '''
-        plugins.base.__init__(self, sh, name)
-        self.sh.log.info(name + '__init__')
-        self.loaded = True
-        self.sh.plugins.register(self)
+        self.sh = sh
+        self.sh.log.info('__init__')
 
-    def webserver_run(self, port, path, lib, api):
+    def webserver_run(self, port, path, lib, api, capi):
         ''' Startet einen Webserver
 
         Param:
@@ -153,18 +159,18 @@ class plugin(plugins.base):
             Object des HTTPServer
         '''
         self.sh.log.info('webserver_run')
+        self.port = port
 
         ''' Erstellen des Servers '''
-        handler = partial(webserverHandler, self.sh, path, lib, api)
-        server = ThreadedHTTPServer(('0.0.0.0', port), handler)
+        handler = partial(webserverHandler, self.sh, path, lib, api, capi)
+        self.server = ThreadedHTTPServer(('0.0.0.0', port), handler)
 
         ''' Starten des Servers '''
-        th = loopThread(server)
+        th = loopThread(self.server)
         th.start()
 
-        return server
 
-    def webserver_stop(self, server, port):
+    def webserver_stop(self):
         ''' Stopt den Webserver und sendet Last-Call
         Param:
             server: server objeckt
@@ -172,11 +178,11 @@ class plugin(plugins.base):
         '''
         self.sh.log.info('webserver_stop')
 
-        if server:
-            server.shutdown()
+        if self.server:
+            self.server.shutdown()
 
         ''' sende Last-Call '''
         try:
-            last_call("http://localhost:"+str(port)).start()
+            last_call("http://localhost:"+str(self.port)).start()
         except:
             pass

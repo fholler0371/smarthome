@@ -15,6 +15,8 @@ Verlauf:
 import os
 import importlib.util
 
+import bin.config as config
+
 class master():
     ''' Masterklasse zum verwalten der Plugins '''
     def __init__(self, sh):
@@ -116,6 +118,7 @@ class base():
         '''
         self.sh = sh
         self.name = name
+        self.friendly_name = name
         self.require = []
         self.cfg = {}
         self.lib = {}
@@ -164,6 +167,15 @@ class base():
         ''' setze Konfig '''
         self.cfg = defaults
 
+        if not('friendly_name' in self.cfg):
+            cfg = config.load(self.sh, self.name + '/properties' , path='plugins')
+            if 'friendly' in cfg.data:
+                self.cfg['friendly_name'] = cfg.data['friendly']
+            else:
+                self.cfg['friendly_name'] = self.name
+            self.sh.cfg.data['plugins'][self.name]['friendly_name'] = self.cfg['friendly_name']
+            self.sh.cfg.save()
+
     def run(self):
         ''' Dummy Run '''
         pass
@@ -171,3 +183,6 @@ class base():
     def stop(self):
         ''' Dummy Pass'''
         pass
+
+    def webserver_api(self, data):
+        return data
