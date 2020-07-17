@@ -1,3 +1,5 @@
+import json
+
 known_sensors = {}
 
 def new_value(name, value, last):
@@ -10,8 +12,19 @@ def new_value(name, value, last):
         known_sensors[name]['value'] = value
 #    print(name, value, last)
 
-def load(self):
-    print('openweather load data')
+def load(sh):
+#    try:
+    if True:
+        global known_sensors
+        f = open(sh.const.path + '/db/openweathermap.json', 'r')
+        known_sensors = json.loads(f.read())
+        f.close()
+#    except:
+#        print('error')
+#        pass
 
-def save(self):
-    print('openweather save data')
+def save(sh):
+    global known_sensors
+    f = open(sh.const.path + '/db/openweathermap.json', 'w')
+    f.write(json.dumps(known_sensors))
+    f.close()

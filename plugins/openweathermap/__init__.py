@@ -25,7 +25,7 @@ class plugin(plugins.base):
         self.sensors = {}
 
     def run(self):
-        sensor.load(self)
+        sensor.load(self.sh)
         self.timer = self.lib['timer'].start(self.cfg['intervall'], self.job)
 
     def job(self):
@@ -65,7 +65,7 @@ class plugin(plugins.base):
     def stop(self):
         if self.timer:
             self.timer.stop()
-        sensor.save(self)
+        sensor.save(self.sh)
 
     def _set_config(self, data):
         self.cfg['api'] = data['api']

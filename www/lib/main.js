@@ -21,7 +21,8 @@ requirejs.config({
         jqxpasswordinput: 'jqwidgets/jqxpasswordinput',
         jqxnumberinput: 'jqwidgets/jqxnumberinput',
         jqxmenu: 'jqwidgets/jqxmenu',
-        jqxwindow: 'jqwidgets/jqxwindow'
+        jqxwindow: 'jqwidgets/jqxwindow',
+        jqxgrid_columnsresize: 'jqwidgets/jqxgrid.columnsresize'
     },
     shim:{
         jqxcore : {
@@ -34,6 +35,9 @@ requirejs.config({
             deps : ['jqxgrid']
           },
         jqxgrid_edit : {
+            deps : ['jqxgrid']
+          },
+        jqxgrid_columnsresize : {
             deps : ['jqxgrid']
           },
         jqxtabs : {

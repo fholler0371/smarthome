@@ -1,5 +1,5 @@
 define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs', 'jqxgrid_selection', 'jqxcheckbox',
-    'jqxgrid_edit', 'jqxpanel'],
+    'jqxgrid_edit', 'jqxpanel', 'jqxgrid_columnsresize'],
     function($) {
   openweathermap = {
     func : function() {
@@ -60,6 +60,7 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
             width: '100%',
             height: '100%',
             source: dataAdapter,
+            columnsresize: true,
             columns: [
               { text: 'Name', datafield: 'name'},
               { text: 'Bezeichnung', datafield: 'friendly_name'},
