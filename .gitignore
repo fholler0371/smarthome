@@ -4,5 +4,7 @@ www/lib/requirejs/*
 __pycache__/
 etc/*.json
 db/*.sqlite
-log/*.log
+db/*.db
+db/*.json
+log/*.log*
 tmp/*
