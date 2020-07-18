@@ -178,7 +178,7 @@ define(['jquery', 'jqxbutton', 'jqxmenu'], function($) {
             html += '<li>'+entry.label+'<ul>'
             var l1 = entry.sub.length
             for (var i1=0; i1<l1; i1++) {
-              entry1 = entry.sub[i]
+              entry1 = entry.sub[i1]
               html += '<li  data-mod="'+entry1.mod+'" data-p1="'+entry1.p1+'" data-p2="'+entry1.p2+'" data-p3="'+entry1.p3+'"'
               if (entry1.display != undefined) {
                 if (!entry1.display) {
