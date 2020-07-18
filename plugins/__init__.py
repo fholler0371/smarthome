@@ -81,13 +81,20 @@ class master():
         ''' Laden des Plugins '''
         spec = importlib.util.spec_from_file_location(name, file)
         mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        try:
+            spec.loader.exec_module(mod)
+        except Exception as e:
+            self.sh.log.error(str(e))
         if not hasattr(mod, 'plugin'):
             self.sh.log.error('Klasse plugin nicht gefunden')
             return None
-        plugin = mod.plugin(self.sh, name)
+        try:
+            plugin = mod.plugin(self.sh, name)
+        except Exception as e:
+            self.sh.log.error(str(e))
 
         ''' wenn alles gut gelaufen ist starten des Plugins '''
+        self.sh.log.info("plugin load " + name + " " + str(plugin.loaded))
         if plugin.loaded:
             plugin.run()
 
@@ -141,6 +148,8 @@ class base():
         self.loaded = ok
 
     def create_config(self, defaults):
+        self.sh.log.info('crete_config')
+        self.sh.log.debug(str(defaults))
         ''' pruefe Konfiguration und setze ggf. defaults
 
         Param:
@@ -175,6 +184,7 @@ class base():
                 self.cfg['friendly_name'] = self.name
             self.sh.cfg.data['plugins'][self.name]['friendly_name'] = self.cfg['friendly_name']
             self.sh.cfg.save()
+        self.sh.log.info('crete_config finish')
 
     def run(self):
         ''' Dummy Run '''
