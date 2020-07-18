@@ -1,8 +1,7 @@
+friendly_name: WetterPi
+geo:
+  lat: '52.5092947'
+  long: '13.4178536'
 logger:
   dest: file
   level: error
-plugins:
-  webserver_backend_client:
-    lib: www/lib
-    path: www/backend/client
-    port: 4050
