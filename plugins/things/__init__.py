@@ -9,4 +9,5 @@ class plugin(plugins.base):
         val = {}
         self.create_config(val)
         self.loaded = True
-
+        if self.loaded:
+            self.sh.plugins.register(self)

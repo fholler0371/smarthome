@@ -163,7 +163,12 @@ class server:
 
         ''' Erstellen des Servers '''
         handler = partial(webserverHandler, self.sh, path, lib, api, capi)
-        self.server = ThreadedHTTPServer(('0.0.0.0', port), handler)
+        try:
+            self.server = ThreadedHTTPServer(('0.0.0.0', port), handler)
+        except Exception as e:
+            self.sh.log.error(str(e))
+            print(str(e))
+            os._exit(0)
 
         ''' Starten des Servers '''
         th = loopThread(self.server)

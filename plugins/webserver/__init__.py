@@ -25,9 +25,9 @@ import urllib.request
 import plugins
 import bin.ping as ping
 import bin.config as config
-import plugins.webserver_backend_master.auth as auth
-import plugins.webserver_backend_master.server as server
-import plugins.webserver_backend_master.system as system
+import plugins.webserver.auth as auth
+import plugins.webserver.server as server
+import plugins.webserver.system as system
 
 class scanThread(Thread):
     def __init__(self, log, net, pl, client_port):
