@@ -11,3 +11,6 @@ class plugin(plugins.base):
         self.loaded = True
         if self.loaded:
             self.sh.plugins.register(self)
+
+    def new_sensor_value(self, data):
+        print(data)

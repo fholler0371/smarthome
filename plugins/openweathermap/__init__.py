@@ -27,7 +27,7 @@ class plugin(plugins.base):
     def run(self):
         self.sh.log.info('run')
         try:
-            sensor.load(self.sh)
+            sensor.load(self.sh, self, self.lib['things'])
         except Exception as e:
             self.sh.log.error(str(e))
         self.timer = self.lib['timer'].start(self.cfg['intervall'], self.job)
