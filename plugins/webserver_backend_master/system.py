@@ -105,7 +105,7 @@ def get_plugins(sh):
                            'friendly': cfg.data['friendly'], 'description': cfg.data['description']})
     return out
 
-def set_reboot(sh):
+def set_install(sh):
     th = systemInstallThread(sh.log)
     th.start()
     return {}
