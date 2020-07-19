@@ -46,8 +46,6 @@ def load(_sh, _plugin, _things):
     things = _things
     sh = _sh
     plugin = _plugin
-    print(sh)
-    print(things)
     try:
         f = open(sh.const.path + '/db/openweathermap.json', 'r')
         known_sensors = json.loads(f.read())

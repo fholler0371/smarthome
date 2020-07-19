@@ -32,6 +32,18 @@ def new_value(data):
 #    print(change)
 
 def load(_sh, _plugin):
-    global sh, plugin
+    global sh, plugin, sensors
     sh = _sh
     plugin = _plugin
+    try:
+        f = open(sh.const.path + '/db/things.json', 'r')
+        sensors = json.loads(f.read())
+        f.close()
+    except Exception as e:
+        sh.log.error(str(e))
+
+def save(sh):
+    global sensors
+    f = open(sh.const.path + '/db/things.json', 'w')
+    f.write(json.dumps(sensors))
+    f.close()

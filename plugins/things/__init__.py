@@ -18,6 +18,9 @@ class plugin(plugins.base):
     def run(self):
         sensor.load(self.sh, self)
 
+    def stop(self):
+        sensor.save(self.sh)
+
     def new_sensor_value(self, data):
         sensor.new_value(data)
 
