@@ -59,4 +59,4 @@ class basic():
         self.aes_key = ''
 
         self.units = ['', '%', 'Grad', 'Grad C', 'hPa', 'm', 'm/s', 'utc']
-        self.types = ['Druck', 'Entfernung', 'Feuchtigkeit', 'Geschwindigkeit', 'Temperatur', 'UV', 'Winkel', 'Wolken', 'Zeit']
+        self.types = ['Druck', 'Entfernung', 'Feuchtigkeit', 'Geschwindigkeit', 'Index', 'Temperatur', 'Text', 'UV', 'Winkel', 'Wolken', 'Zeit']

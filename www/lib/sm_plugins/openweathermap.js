@@ -83,7 +83,7 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
               },
               { text: 'Datentyp', datafield: 'var_type', columntype: 'combobox',
                 createeditor: function (row, column, editor) {
-                  editor.jqxComboBox({ autoDropDownHeight: true, source: ['Int', 'Float'], promptText: "Typ festlegen:" });
+                  editor.jqxComboBox({ autoDropDownHeight: true, source: ['Int', 'Float', 'Str'], promptText: "Typ festlegen:" });
                 }
               },
               { text: 'hat Standart', datafield: 'has_value', columntype: 'checkbox'},

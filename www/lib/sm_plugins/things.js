@@ -41,13 +41,25 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
               { name: 'value', type: 'string' },
               { name: 'unit', type: 'string' },
               { name: 'type', type: 'string' },
-              { name: 'has_default', type: 'bool'},
-              { name: 'default', type: 'string' },
-              { name: 'seen', type: 'bool'},
-              { name: 'send', type: 'bool'},
-              { name: 'var_type', type: 'str'}
+              { name: 'time', type: 'int' }
             ]}
           var dataAdapter = new $.jqx.dataAdapter(source)
+          var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            if (columnfield == 'time') {
+              var utc = new Date().getTime()
+              var d = new Date(value*1000)
+              if (utc-value*1000 < 86400000) {
+                 var h = d.getHours()
+                 var m = d.getMinutes()
+                 var s = d.getSeconds()
+                 var frm = '' + (h<=9 ? '0' + h : h) + ':' + (m<=9 ? '0' + m : m) + ':' + (s<=9 ? '0' + s : s)
+                return defaulthtml.replace(value, frm)
+              } else {
+                return defaulthtml
+              }
+            }
+            return defaulthtml
+          }
           $("#things_sensor").jqxGrid({
             width: '100%',
             height: '100%',
@@ -55,28 +67,12 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
             columnsresize: true,
             editable: true,
             columns: [
-              { text: 'Name', datafield: 'name', editable: false},
+              { text: 'Name', datafield: 'name', editable: false, hidden: true},
               { text: 'Bezeichnung', datafield: 'friendly_name'},
               { text: 'Wert', datafield: 'value', editable: false},
-              { text: 'Einheit', datafield: 'unit', columntype: 'combobox',
-                createeditor: function (row, column, editor) {
-                  editor.jqxComboBox({ autoDropDownHeight: true, source: data.data.units, promptText: "Einheit festlegen:" });
-                }
-              },
-              { text: 'Typ', datafield: 'type', columntype: 'combobox',
-                createeditor: function (row, column, editor) {
-                  editor.jqxComboBox({ autoDropDownHeight: true, source: data.data.types, promptText: "Typ festlegen:" });
-                }
-              },
-              { text: 'Datentyp', datafield: 'var_type', columntype: 'combobox',
-                createeditor: function (row, column, editor) {
-                  editor.jqxComboBox({ autoDropDownHeight: true, source: ['Int', 'Float'], promptText: "Typ festlegen:" });
-                }
-              },
-              { text: 'hat Standart', datafield: 'has_value', columntype: 'checkbox'},
-              { text: 'Standart', datafield: 'default'},
-              { text: 'gesehen', datafield: 'seen', columntype: 'checkbox'},
-              { text: 'senden', datafield: 'send', columntype: 'checkbox'}
+              { text: 'Einheit', datafield: 'unit', editable: false},
+              { text: 'Zeitpunkt', datafield: 'time', editable: false, cellsrenderer: cellsrenderer},
+              { text: 'Typ', datafield: 'type', editable: false}
             ]
           })
           $("#things_sensor").off('cellendedit')
