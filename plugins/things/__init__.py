@@ -3,6 +3,7 @@ from threading import Thread, Timer
 import plugins
 
 import plugins.things.sensor as sensor
+import plugins.things.web as web
 
 class plugin(plugins.base):
     def __init__(self, sh, name):
@@ -19,3 +20,7 @@ class plugin(plugins.base):
 
     def new_sensor_value(self, data):
         sensor.new_value(data)
+
+    def sm_backend(self, data):
+        data = web.sm_backend(self.sh, self, data)
+        return data

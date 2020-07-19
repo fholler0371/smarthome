@@ -1,3 +1,4 @@
 background: True
 friendly: Things Manger
 description: Verwalte die Sensoren
+backend_web: True

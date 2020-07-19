@@ -80,7 +80,4 @@ class plugin(plugins.base):
 
     def sm_backend(self, data):
         data = web.sm_backend(self.sh, self, data)
-#cmd = data['cmd'].split('.')[2] return data['data'] if cmd == "get_config": return {'api': self.cfg['api'], 'intervall': self.cfg['intervall']} 
-#        elif cmd == "set_config":
-#           self._set_config(data) return {} else: print(cmd)
         return data

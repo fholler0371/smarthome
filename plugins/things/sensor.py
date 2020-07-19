@@ -22,14 +22,14 @@ def new_value(data):
         if sensors[data['name']]['last_value'] == None:
             sensors[data['name']]['last_value'] = data['value']
         sensors[data['name']]['last_time'] = sensors[data['name']]['time']
-        sensors[data['name']]['value'] = data['value']
-        sensors[data['name']]['time'] = data['last']
         change = True
+    sensors[data['name']]['value'] = data['value']
+    sensors[data['name']]['time'] = data['last']
     sensors[data['name']]['unit'] = data['unit']
     sensors[data['name']]['type'] = data['type']
     sensors[data['name']]['var_type'] = data['var_type']
-    print(sensors[data['name']])
-    print(change)
+#    print(sensors[data['name']])
+#    print(change)
 
 def load(_sh, _plugin):
     global sh, plugin
