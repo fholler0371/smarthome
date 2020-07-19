@@ -2,6 +2,8 @@ from threading import Thread, Timer
 
 import plugins
 
+import plugins.things.sensor as sensor
+
 class plugin(plugins.base):
     def __init__(self, sh, name):
         plugins.base.__init__(self, sh, name)
@@ -12,5 +14,8 @@ class plugin(plugins.base):
         if self.loaded:
             self.sh.plugins.register(self)
 
+    def run(self):
+        sensor.load(self.sh, self)
+
     def new_sensor_value(self, data):
-        print(data)
+        sensor.new_value(data)
