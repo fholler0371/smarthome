@@ -86,7 +86,7 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
                   editor.jqxComboBox({ autoDropDownHeight: true, source: ['Int', 'Float', 'Str'], promptText: "Typ festlegen:" });
                 }
               },
-              { text: 'hat Standart', datafield: 'has_value', columntype: 'checkbox'},
+              { text: 'hat Standart', datafield: 'has_default', columntype: 'checkbox'},
               { text: 'Standart', datafield: 'default'},
               { text: 'gesehen', datafield: 'seen', columntype: 'checkbox'},
               { text: 'senden', datafield: 'send', columntype: 'checkbox'}
@@ -95,6 +95,8 @@ define(['jquery', 'jqxinput', 'jqxnumberinput', 'jqxdata', 'jqxgrid', 'jqxtabs',
           $("#openweathermap_sensor").off('cellendedit')
           $("#openweathermap_sensor").on('cellendedit', function (event) {
             var row = event.args.row
+            console.log(event.args.datafield)
+            console.log(event.args.value)
             row[event.args.datafield] = event.args.value
             window.smcall({'client': 'sm_backend', 'cmd':'openweathermap', 'data': {'ip':window.module.sm_backend.ip,
                                                                                      cmd:'client_set_sensor', 'row': row}}, function() {})

@@ -34,6 +34,7 @@ def set_row(data):
         known_sensors[data['name']]['unit'] = data['unit']
         known_sensors[data['name']]['type'] = data['type']
         known_sensors[data['name']]['has_default'] = data['has_default']
+        known_sensors[data['name']]['default'] = data['default']
         known_sensors[data['name']]['type'] = data['type']
         known_sensors[data['name']]['send'] = data['send']
         known_sensors[data['name']]['var_type'] = data['var_type']
