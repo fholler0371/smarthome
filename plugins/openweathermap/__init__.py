@@ -39,6 +39,7 @@ class plugin(plugins.base):
             try:
                 r = requests.get(url)
                 if r.status_code == 200:
+                    sensor.start()
                     data = json.loads(r.content.decode())
                     for element in data['current']:
                         if element != 'dt' and element != 'weather' and element != 'rain':
@@ -64,7 +65,7 @@ class plugin(plugins.base):
                         l += 1
             except Exeception as e:
                 self.sh.log.error(str(e))
-            print("Anzahl: ", len(self.sensors))
+            sensor.send_default()
 
     def stop(self):
         if self.timer:
